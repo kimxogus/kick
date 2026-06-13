@@ -50,6 +50,15 @@ MVP 시연은 탐색자와 제작자 2개 플로우를 모두 보여준다.
 - Newsletter 실제 발송은 제외하되, 큐레이션 구독 UI는 제공해야 한다.
 - 완전한 더미 데이터보다 실제 존재하는 서비스 기반 seed 데이터를 사용해 콘텐츠 밀도를 확보해야 한다.
 
+## MVP 실행 및 배포 요구사항
+
+- MVP 실행과 배포는 OpenAI Codex Sites를 1순위로 고려한다.
+- 발표 전에는 Sites saved version을 만들고 검토한다.
+- 가능하면 승인된 saved version을 발표용 URL로 deploy한다.
+- Sites 접근, 권한, plugin, preview 정책, 배포 실패 문제가 생기면 정적 파일 로컬 실행 또는 localhost 실행으로 시연한다.
+- fallback 실행 명령은 앱 구현 단계에서 문서화한다.
+- MVP는 원격 DB, Auth, Storage 없이도 seed 데이터와 UI 흐름으로 시연 가능해야 한다.
+
 ## MVP 후순위 요구사항
 
 - Daily, Monthly, Yearly board를 제공한다.
@@ -104,7 +113,8 @@ MVP에서는 아래 방식으로 대체한다.
 ## 비기능 요구사항
 
 - 1주일 내 MVP 시연이 가능해야 한다.
-- 사내 행사 목적이므로 무료 또는 저비용 배포를 우선한다.
+- 사내 행사 목적이므로 무료 또는 저비용 실행/배포를 우선한다.
+- Codex Sites를 우선하되, Sites 실패 시 로컬 fallback으로 시연 가능해야 한다.
 - 백엔드 로직은 최소화하고 UI와 제작자용 MCP/Skill 완성도를 우선한다.
 - Codex와 Claude Code 모두에서 개발 경험이 동작해야 한다.
 - 구현 전 문서와 ADR을 먼저 갱신한다.
@@ -114,8 +124,9 @@ MVP에서는 아래 방식으로 대체한다.
 ## 결정 필요 사항
 
 - [x] 정식 서비스명: `kick`
-- [ ] MVP 앱 스택
-- [ ] DB 선택
+- [x] MVP 실행/배포 전략: Codex Sites 우선, 정적 파일 또는 localhost fallback
+- [ ] MVP 앱 프레임워크와 Sites 호환 빌드 방식
+- [ ] DB 선택: MVP 필수 제외, D1/R2 필요 여부는 지속 데이터 또는 업로드 요구가 생기면 결정
 - [ ] Auth 범위: 익명, 소셜 로그인, 사내 이메일 제한
 - [ ] 투표 정책: 1인 1표, 제품별 1표, 주간 reset 기준
 - [ ] Search 범위: 제품명/소개/태그만 검색할지, 전문 검색을 둘지

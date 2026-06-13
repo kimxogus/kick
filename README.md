@@ -8,7 +8,8 @@ AI로 제품을 만드는 사람은 빠르게 늘고 있지만, 제품의 강점
 - 서비스명은 `kick`으로 확정했습니다.
 - 저장소명 `k-producthunt`는 초기 가제와 코드명으로만 남아 있습니다.
 - 문서와 의사결정 기록을 먼저 세우는 초기 단계입니다.
-- backend, frontend, DB, 배포 스택은 아직 확정하지 않았습니다.
+- MVP 실행과 배포는 OpenAI Codex Sites를 1순위로 고려합니다.
+- Sites 접근 또는 preview 제약이 생기면 정적 파일 로컬 실행 또는 localhost 실행으로 시연합니다.
 - 백엔드 로직은 최소화하고, UI 완성도와 제작자용 MCP/Skill 데모 완성도를 우선합니다.
 - 모든 문서는 팀 논의를 통해 계속 갱신되는 draft입니다.
 
@@ -27,6 +28,8 @@ MVP 우선 기능:
 - 제작자 런칭 보조 Skill/MCP
 - Newsletter UI
 - 실제 서비스 기반 seed 데이터
+- Codex Sites saved version 검토와 가능할 경우 발표용 배포 URL
+- fallback 정적 파일 또는 localhost 실행 경로
 
 후순위 기능:
 
