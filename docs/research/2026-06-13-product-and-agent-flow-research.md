@@ -17,11 +17,11 @@
 - Product Hunt launch: https://www.producthunt.com/launch
 - Disquiet: https://disquiet.io
 - Fairy explore: https://fairy.hada.io/explore
-- OpenAI Codex Sites: https://developers.openai.com/codex/sites.md
+- OpenAI Codex Sites: https://developers.openai.com/codex/sites
 - OpenAI Codex pricing: https://developers.openai.com/codex/pricing
 - Model Context Protocol tools: https://modelcontextprotocol.io/docs/concepts/tools
 - Claude Code skills: https://docs.claude.com/en/docs/claude-code/skills
-- OpenAI Codex manual: https://developers.openai.com/codex/codex-manual.md
+- OpenAI Codex Skills: https://developers.openai.com/codex/skills
 - Microsoft HAX Toolkit: https://www.microsoft.com/en-us/haxtoolkit/library/
 - NIST AI Risk Management Framework: https://www.nist.gov/itl/ai-risk-management-framework
 
@@ -51,7 +51,7 @@ Sites는 Cloudflare Worker-compatible ES module output을 요구하며, 지속 �
 
 ### 제작자 런칭 보조
 
-Claude Code Skill 문서는 Skill이 `SKILL.md`와 supporting files를 통해 반복 작업을 확장한다고 설명한다. Codex 매뉴얼도 Skill을 반복 워크플로, references, optional scripts로 구성하고 progressive disclosure를 권장한다.
+Claude Code Skill 문서는 Skill이 `SKILL.md`와 supporting files를 통해 반복 작업을 확장한다고 설명한다. OpenAI Codex Skills 문서도 Skill을 반복 워크플로, references, optional scripts로 구성하고 progressive disclosure를 권장한다.
 
 따라서 제작자 런칭 보조는 Skill에 적합하다. Skill은 제품 정보 수집, 누락 질문, 타겟 분석, 셀링 포인트 정리, 홍보 문구 생성처럼 대화형 절차가 중요한 작업을 맡는다.
 
