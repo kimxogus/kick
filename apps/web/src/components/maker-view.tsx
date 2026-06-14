@@ -25,20 +25,27 @@ export function MakerView({ onAnalyze = defaultAnalyze, onSubmit = defaultSubmit
   const [result, setResult] = useState<LaunchAssistResponse["result"] | null>(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const [status, setStatus] = useState<"idle" | "generating" | "ready" | "submitted">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function handleAnalyze(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatus("generating");
-    const response = await onAnalyze({
-      productName,
-      websiteUrl: websiteUrl || undefined,
-      descriptionDraft,
-      targetUsers: splitInput(targetUsers),
-      problem,
-      features: splitInput(features)
-    });
-    setResult(response.result);
-    setStatus("ready");
+    setErrorMessage("");
+    try {
+      const response = await onAnalyze({
+        productName,
+        websiteUrl: websiteUrl || undefined,
+        descriptionDraft,
+        targetUsers: splitInput(targetUsers),
+        problem,
+        features: splitInput(features)
+      });
+      setResult(response.result);
+      setStatus("ready");
+    } catch (error) {
+      setStatus("idle");
+      setErrorMessage(error instanceof Error ? error.message : "분석 요청을 처리하지 못했습니다.");
+    }
   }
 
   async function handleSubmit() {
@@ -90,6 +97,7 @@ export function MakerView({ onAnalyze = defaultAnalyze, onSubmit = defaultSubmit
           <input value={features} onChange={(event) => setFeatures(event.target.value)} />
         </label>
         <button type="submit">{status === "generating" ? "분석 중" : "분석하기"}</button>
+        {errorMessage ? <p role="alert">{errorMessage}</p> : null}
       </form>
 
       {result ? (
@@ -163,7 +171,7 @@ async function defaultAnalyze(draft: MakerSubmissionDraft): Promise<LaunchAssist
     body: JSON.stringify(draft)
   });
   if (!response.ok) {
-    throw new Error("launch assist failed");
+    throw new Error(await readErrorMessage(response, "분석 요청을 처리하지 못했습니다."));
   }
   return (await response.json()) as LaunchAssistResponse;
 }
@@ -177,4 +185,13 @@ async function defaultSubmit(payload: LaunchAssistResponse["result"]["submission
     throw new Error("submission failed");
   }
   return (await response.json()) as MakerSubmissionResponse;
+}
+
+async function readErrorMessage(response: Response, fallback: string): Promise<string> {
+  try {
+    const body = (await response.json()) as { error?: { message?: string } };
+    return body.error?.message ?? fallback;
+  } catch {
+    return fallback;
+  }
 }

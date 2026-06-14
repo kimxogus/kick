@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 import { getOrCreateViewerId } from "@/lib/viewer";
 import type { NewsletterResponse, ProductDetailResponse, VoteResponse } from "@/server/kick-service";
@@ -9,12 +9,37 @@ type ProductDetailViewProps = {
   detail: ProductDetailResponse;
   onVote?: (launchId: string) => Promise<VoteResponse>;
   onSubscribe?: (email: string) => Promise<NewsletterResponse>;
+  onSyncDetail?: (slug: string, viewerId: string) => Promise<ProductDetailResponse>;
 };
 
-export function ProductDetailView({ detail, onVote = defaultVote, onSubscribe = defaultSubscribe }: ProductDetailViewProps) {
+export function ProductDetailView({
+  detail,
+  onVote = defaultVote,
+  onSubscribe = defaultSubscribe,
+  onSyncDetail = defaultSyncDetail
+}: ProductDetailViewProps) {
   const [launch, setLaunch] = useState(detail.launch);
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterState, setNewsletterState] = useState<"idle" | "success" | "error">("idle");
+
+  useEffect(() => {
+    let isCancelled = false;
+    const viewerId = getOrCreateViewerId();
+
+    void onSyncDetail(detail.product.slug, viewerId)
+      .then((syncedDetail) => {
+        if (!isCancelled) {
+          setLaunch(syncedDetail.launch);
+        }
+      })
+      .catch(() => {
+        // 정적 파일 또는 네트워크 없는 시연에서는 초기 상세 정보를 그대로 사용한다.
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [detail.product.slug, onSyncDetail]);
 
   async function handleVote() {
     const response = await onVote(launch.id);
@@ -128,6 +153,14 @@ async function defaultVote(launchId: string): Promise<VoteResponse> {
     throw new Error("vote failed");
   }
   return (await response.json()) as VoteResponse;
+}
+
+async function defaultSyncDetail(slug: string, viewerId: string): Promise<ProductDetailResponse> {
+  const response = await fetch(`/api/products/${slug}?viewer_id=${viewerId}`);
+  if (!response.ok) {
+    throw new Error("product detail sync failed");
+  }
+  return (await response.json()) as ProductDetailResponse;
 }
 
 async function defaultSubscribe(email: string): Promise<NewsletterResponse> {

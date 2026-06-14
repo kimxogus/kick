@@ -75,4 +75,13 @@ describe("MakerView", () => {
 
     expect(await screen.findByText("/submissions/submission_test")).toBeTruthy();
   });
+
+  it("분석 실패 시 오류를 보여주고 버튼 상태를 복구한다", async () => {
+    render(<MakerView onAnalyze={async () => Promise.reject(new Error("제품명이 필요합니다."))} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "분석하기" }));
+
+    expect((await screen.findByRole("alert")).textContent).toContain("제품명이 필요합니다.");
+    expect(screen.getByRole("button", { name: "분석하기" })).toBeTruthy();
+  });
 });
