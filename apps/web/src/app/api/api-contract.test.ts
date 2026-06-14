@@ -59,6 +59,20 @@ describe("kick MVP API route handlers", () => {
     expect(body.error.fields).toContain("body");
   });
 
+  it("POST API는 객체가 아닌 JSON body를 validation error로 반환한다", async () => {
+    const response = await toggleVote(
+      new Request("http://localhost/api/votes", {
+        method: "POST",
+        body: "null"
+      })
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(body.error.code).toBe("VALIDATION_ERROR");
+    expect(body.error.fields).toContain("body");
+  });
+
   it("POST /api/newsletter-subscriptions는 이메일 형식을 검증한다", async () => {
     const response = await createNewsletterSubscription(
       new Request("http://localhost/api/newsletter-subscriptions", {
@@ -107,6 +121,26 @@ describe("kick MVP API route handlers", () => {
     expect(body.result.appealPoints).toHaveLength(3);
   });
 
+  it("POST /api/maker/launch-assist는 배열 필드 타입을 검증한다", async () => {
+    const response = await createLaunchAssist(
+      new Request("http://localhost/api/maker/launch-assist", {
+        method: "POST",
+        body: JSON.stringify({
+          productName: "DemoFlow",
+          descriptionDraft: "시연 준비를 정리하는 제품",
+          targetUsers: "maker",
+          problem: "발표 준비가 흩어져 있다",
+          features: "데모 스크립트"
+        })
+      })
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(body.error.code).toBe("VALIDATION_ERROR");
+    expect(body.error.fields).toEqual(expect.arrayContaining(["targetUsers", "features"]));
+  });
+
   it("POST와 GET /api/maker/submissions는 제출 후보를 저장하고 조회한다", async () => {
     const createResponse = await createMakerSubmission(
       new Request("http://localhost/api/maker/submissions", {
@@ -136,5 +170,28 @@ describe("kick MVP API route handlers", () => {
     expect(createResponse.status).toBe(200);
     expect(detailResponse.status).toBe(200);
     expect(detail.submission.payload.productName).toBe("DemoFlow");
+  });
+
+  it("POST /api/maker/submissions는 payload 필드 타입을 검증한다", async () => {
+    const response = await createMakerSubmission(
+      new Request("http://localhost/api/maker/submissions", {
+        method: "POST",
+        body: JSON.stringify({
+          viewerId: "api_maker",
+          payload: {
+            productName: 123,
+            tagline: "DemoFlow로 발표 준비를 정리하세요.",
+            description: "사내 시연 준비를 돕는 제품입니다.",
+            tags: "Demo",
+            makerNote: "MVP 후보"
+          }
+        })
+      })
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(body.error.code).toBe("VALIDATION_ERROR");
+    expect(body.error.fields).toEqual(expect.arrayContaining(["productName", "tags"]));
   });
 });

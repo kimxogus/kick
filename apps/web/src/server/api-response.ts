@@ -28,8 +28,16 @@ export function jsonError(error: unknown): Response {
 
 export async function readJson<T>(request: Request): Promise<T> {
   try {
-    return (await request.json()) as T;
+    const body = (await request.json()) as unknown;
+    if (!isRecord(body)) {
+      throw new KickServiceError("VALIDATION_ERROR", "JSON 요청 본문을 확인해주세요.", ["body"]);
+    }
+    return body as T;
   } catch {
     throw new KickServiceError("VALIDATION_ERROR", "JSON 요청 본문을 확인해주세요.", ["body"]);
   }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

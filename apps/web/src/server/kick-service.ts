@@ -179,6 +179,7 @@ export type KickService = {
 };
 
 type StoredLaunch = Omit<Launch, "isVotedByViewer">;
+type UnknownRecord = Record<string, unknown>;
 
 type KickState = {
   board: Omit<Board, "launches">;
@@ -379,48 +380,50 @@ export function createKickService(): KickService {
     },
 
     toggleVote(request) {
-      if (!request.launchId) {
-        throw new KickServiceError("VALIDATION_ERROR", "launchId가 필요합니다.", ["launchId"]);
-      }
-      if (!request.viewerId) {
-        throw new KickServiceError("VALIDATION_ERROR", "viewerId가 필요합니다.", ["viewerId"]);
-      }
+      const body = requireBodyRecord(request);
+      const invalidFields: string[] = [];
+      const launchId = collectRequiredText(body, "launchId", invalidFields);
+      const viewerId = collectRequiredText(body, "viewerId", invalidFields);
+      throwIfInvalidFields(invalidFields, "vote 요청을 확인해주세요.");
 
-      const launch = state.launches.find((candidate) => candidate.id === request.launchId);
+      const launch = state.launches.find((candidate) => candidate.id === launchId);
       if (!launch) {
         throw new KickServiceError("NOT_FOUND", "launch를 찾을 수 없습니다.", ["launchId"]);
       }
 
-      const voters = state.votes.get(request.launchId) ?? new Set<string>();
-      const wasVoted = voters.has(request.viewerId);
+      const voters = state.votes.get(launchId) ?? new Set<string>();
+      const wasVoted = voters.has(viewerId);
       if (wasVoted) {
-        voters.delete(request.viewerId);
+        voters.delete(viewerId);
         launch.voteCount -= 1;
       } else {
-        voters.add(request.viewerId);
+        voters.add(viewerId);
         launch.voteCount += 1;
       }
-      state.votes.set(request.launchId, voters);
+      state.votes.set(launchId, voters);
 
       return {
-        launchId: request.launchId,
+        launchId,
         voteCount: launch.voteCount,
         isVotedByViewer: !wasVoted
       };
     },
 
     createNewsletterSubscription(request) {
-      if (!isValidNewsletterSource(request.source)) {
-        throw new KickServiceError("VALIDATION_ERROR", "newsletter source를 확인해주세요.", ["source"]);
+      const body = requireBodyRecord(request);
+      const source = body.source;
+      if (!isValidNewsletterSource(source)) {
+        throw new KickServiceError("VALIDATION_ERROR", "newsletter 요청을 확인해주세요.", ["source"]);
       }
-      if (!isValidEmail(request.email)) {
+      const email = body.email;
+      if (!isValidEmail(email)) {
         throw new KickServiceError("VALIDATION_ERROR", "이메일 형식을 확인해주세요.", ["email"]);
       }
 
       const subscription: NewsletterSubscription = {
         id: `newsletter_${state.subscriptions.length + 1}`,
-        email: request.email.trim(),
-        source: request.source,
+        email: email.trim(),
+        source,
         createdAt: new Date().toISOString()
       };
       state.subscriptions.push(subscription);
@@ -429,24 +432,29 @@ export function createKickService(): KickService {
     },
 
     createLaunchAssist(request) {
-      const productName = request.productName.trim();
-      if (!productName) {
-        throw new KickServiceError("VALIDATION_ERROR", "제품명이 필요합니다.", ["productName"]);
-      }
+      const body = requireBodyRecord(request);
+      const invalidFields: string[] = [];
+      const productName = collectRequiredText(body, "productName", invalidFields);
+      const descriptionDraft = collectOptionalText(body, "descriptionDraft", invalidFields) ?? "";
+      const targetUsers = collectStringArray(body, "targetUsers", invalidFields);
+      const problem = collectOptionalText(body, "problem", invalidFields) ?? "";
+      const features = collectStringArray(body, "features", invalidFields);
+      const websiteUrl = collectOptionalText(body, "websiteUrl", invalidFields);
+      throwIfInvalidFields(invalidFields, "제작자 런칭 보조 요청을 확인해주세요.");
 
       const followUpQuestions: string[] = [];
-      if (request.targetUsers.length === 0) {
+      if (targetUsers.length === 0) {
         followUpQuestions.push("대상 사용자를 더 구체적으로 알려주세요.");
       }
-      if (!request.problem.trim()) {
+      if (!problem.trim()) {
         followUpQuestions.push("제품이 해결하려는 문제를 한 문장으로 알려주세요.");
       }
 
-      const primaryFeature = request.features[0] ?? "핵심 기능";
-      const target = request.targetUsers[0] ?? "초기 사용자";
+      const primaryFeature = features[0] ?? "핵심 기능";
+      const target = targetUsers[0] ?? "초기 사용자";
       const tagline = `${productName}로 ${target}의 ${primaryFeature}을 더 쉽게 만드세요.`;
-      const description = `${productName}은 ${request.descriptionDraft} 제작자가 전달한 기능을 사용자 이득 중심으로 정리해 런칭 준비를 돕습니다.`;
-      const tags = uniqueTags(["AI", "Launch", ...request.features.map(toTag)]);
+      const description = `${productName}은 ${descriptionDraft} 제작자가 전달한 기능을 사용자 이득 중심으로 정리해 런칭 준비를 돕습니다.`;
+      const tags = uniqueTags(["AI", "Launch", ...features.map(toTag)]);
 
       return {
         result: {
@@ -455,8 +463,8 @@ export function createKickService(): KickService {
             "대상 사용자와 문제를 한 화면에서 설명할 수 있습니다.",
             "등록 payload까지 이어져 제작자 플로우가 끊기지 않습니다."
           ],
-          targetAnalysis: request.targetUsers.length > 0 ? request.targetUsers : ["대상 사용자 구체화 필요"],
-          sellingPoints: request.features.slice(0, 3).map((feature) => `${feature}을 사용자 결과 중심으로 보여줍니다.`),
+          targetAnalysis: targetUsers.length > 0 ? targetUsers : ["대상 사용자 구체화 필요"],
+          sellingPoints: features.slice(0, 3).map((feature) => `${feature}을 사용자 결과 중심으로 보여줍니다.`),
           differentiators: ["런칭 문구와 제출 payload를 함께 준비합니다."],
           risksOrUnknowns: followUpQuestions.length > 0 ? ["입력 정보가 부족해 일부 문구는 보수적으로 작성했습니다."] : [],
           tagline,
@@ -477,7 +485,7 @@ export function createKickService(): KickService {
             productName,
             tagline,
             description,
-            websiteUrl: request.websiteUrl,
+            websiteUrl,
             tags,
             makerNote: "제작자 런칭 보조 결과로 생성된 MVP 제출 후보입니다."
           },
@@ -487,18 +495,16 @@ export function createKickService(): KickService {
     },
 
     createMakerSubmission(request) {
-      const missingFields = validateSubmissionPayload(request.payload);
-      if (!request.viewerId) {
-        missingFields.push("viewerId");
-      }
-      if (missingFields.length > 0) {
-        throw new KickServiceError("VALIDATION_ERROR", "제출 payload를 확인해주세요.", missingFields);
-      }
+      const body = requireBodyRecord(request);
+      const invalidFields: string[] = [];
+      const viewerId = collectRequiredText(body, "viewerId", invalidFields);
+      const payload = collectSubmissionPayload(body.payload, invalidFields);
+      throwIfInvalidFields(invalidFields, "제출 payload를 확인해주세요.");
 
       const submission: MakerSubmission = {
         id: `submission_${state.submissions.length + 1}`,
-        payload: request.payload,
-        viewerId: request.viewerId,
+        payload,
+        viewerId,
         status: "received",
         createdAt: new Date().toISOString()
       };
@@ -566,6 +572,94 @@ function isValidNewsletterSource(source: unknown): source is NewsletterRequest["
   return source === "board" || source === "product" || source === "maker";
 }
 
+function requireBodyRecord(value: unknown): UnknownRecord {
+  if (!isRecord(value)) {
+    throw new KickServiceError("VALIDATION_ERROR", "JSON 요청 본문을 확인해주세요.", ["body"]);
+  }
+  return value;
+}
+
+function isRecord(value: unknown): value is UnknownRecord {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function collectRequiredText(body: UnknownRecord, field: string, invalidFields: string[]): string {
+  const value = body[field];
+  if (typeof value !== "string" || !value.trim()) {
+    pushField(invalidFields, field);
+    return "";
+  }
+  return value.trim();
+}
+
+function collectOptionalText(body: UnknownRecord, field: string, invalidFields: string[]): string | undefined {
+  const value = body[field];
+  if (value === undefined || value === null || value === "") {
+    return undefined;
+  }
+  if (typeof value !== "string") {
+    pushField(invalidFields, field);
+    return undefined;
+  }
+  return value.trim() || undefined;
+}
+
+function collectStringArray(body: UnknownRecord, field: string, invalidFields: string[]): string[] {
+  const value = body[field];
+  if (value === undefined || value === null) {
+    return [];
+  }
+  if (!Array.isArray(value) || value.some((item) => typeof item !== "string")) {
+    pushField(invalidFields, field);
+    return [];
+  }
+  return value.map((item) => item.trim()).filter(Boolean);
+}
+
+function collectSubmissionPayload(value: unknown, invalidFields: string[]): KickSubmissionPayload {
+  if (!isRecord(value)) {
+    pushField(invalidFields, "payload");
+    return {
+      productName: "",
+      tagline: "",
+      description: "",
+      tags: [],
+      makerNote: ""
+    };
+  }
+
+  const productName = collectRequiredText(value, "productName", invalidFields);
+  const tagline = collectRequiredText(value, "tagline", invalidFields);
+  const description = collectRequiredText(value, "description", invalidFields);
+  const makerNote = collectRequiredText(value, "makerNote", invalidFields);
+  const tags = collectStringArray(value, "tags", invalidFields);
+  const websiteUrl = collectOptionalText(value, "websiteUrl", invalidFields);
+  if (tags.length === 0) {
+    pushField(invalidFields, "tags");
+  }
+
+  return {
+    productName,
+    tagline,
+    description,
+    websiteUrl,
+    tags,
+    makerNote
+  };
+}
+
+function throwIfInvalidFields(fields: string[], message: string): void {
+  if (fields.length > 0) {
+    throw new KickServiceError("VALIDATION_ERROR", message, fields);
+  }
+}
+
+function pushField(fields: string[], field: string): void {
+  if (!fields.includes(field)) {
+    fields.push(field);
+  }
+}
+
 function toTag(value: string): string {
   return value
     .trim()
@@ -577,24 +671,4 @@ function toTag(value: string): string {
 
 function uniqueTags(tags: string[]): string[] {
   return [...new Set(tags.filter(Boolean))].slice(0, 5);
-}
-
-function validateSubmissionPayload(payload: KickSubmissionPayload): string[] {
-  const missingFields: string[] = [];
-  if (!payload?.productName?.trim()) {
-    missingFields.push("productName");
-  }
-  if (!payload?.tagline?.trim()) {
-    missingFields.push("tagline");
-  }
-  if (!payload?.description?.trim()) {
-    missingFields.push("description");
-  }
-  if (!payload?.makerNote?.trim()) {
-    missingFields.push("makerNote");
-  }
-  if (!Array.isArray(payload?.tags) || payload.tags.length === 0) {
-    missingFields.push("tags");
-  }
-  return missingFields;
 }
