@@ -7,21 +7,21 @@
 - [x] MVP 실행/배포 전략 결정
 - [x] Next.js MVP 앱 스택 결정
 - [ ] Codex Sites 접근과 workspace 권한 확인
-- [x] fallback localhost 실행 명령 결정
-- [x] 탐색자 화면 구조 설계
+- [ ] fallback 정적 파일 또는 localhost 실행 명령 결정
+- [ ] 탐색자 화면 구조 설계
 - [ ] 제작자 MCP/Skill 데모 범위 설계
 - [ ] 실제 서비스 기반 seed 데이터 후보 수집
 
 ## Next
 
-- [x] 앱 스캐폴딩
-- [x] 백엔드 API 계약 테스트 작성
-- [x] Weekly board 구현
-- [x] Product 소개 페이지 구현
-- [x] Vote 구현
-- [x] Search 구현
-- [x] Newsletter UI 구현
-- [x] 제작자 등록/런칭 보조 흐름 구현
+- [ ] 앱 스캐폴딩
+- [ ] 백엔드 API 계약 테스트 작성
+- [ ] Weekly board 구현
+- [ ] Product 소개 페이지 구현
+- [ ] Vote 구현
+- [ ] Search 구현
+- [ ] Newsletter UI 구현
+- [ ] 제작자 등록/런칭 보조 흐름 구현
 - [ ] 사내 시연 데이터 준비
 - [ ] Sites saved version 검토
 - [ ] 가능할 경우 발표용 Sites 배포 URL 확보

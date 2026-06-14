@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160" role="img" aria-label="Cursor product preview">
-  <rect width="240" height="160" fill="#111827"/>
-  <rect x="28" y="30" width="184" height="100" rx="10" fill="#f8fafc"/>
-  <path d="M52 58h84M52 78h116M52 98h62" stroke="#111827" stroke-width="8" stroke-linecap="round"/>
-  <path d="M158 56l30 24-30 24z" fill="#0f766e"/>
-</svg>

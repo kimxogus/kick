@@ -23,7 +23,7 @@
 - [ ] Business/Enterprise workspace 권한과 RBAC 필요 여부를 확인한다.
 - [ ] Sites saved version 생성 절차를 검증한다.
 - [ ] 발표용 Sites 배포 URL 확보 절차를 검증한다.
-- [x] fallback localhost 실행 명령을 문서화한다.
+- [ ] fallback 정적 파일 또는 localhost 실행 명령을 문서화한다.
 - [x] MVP DB는 seed fixture와 메모리 저장소로 결정한다.
 - [x] MVP Auth는 로그인 없이 local `viewer_id`로 결정한다.
 - [ ] 이미지 저장 위치를 결정한다.
@@ -46,15 +46,15 @@
 
 ## 구현
 
-- [x] 실패 테스트 또는 검증 시나리오를 먼저 작성하는 TDD 흐름을 프로젝트 명령에 반영한다.
-- [x] 앱 스캐폴딩을 생성한다.
-- [x] seed 데이터 로딩 방식을 구현한다.
-- [x] Weekly board MVP를 구현한다.
-- [x] Product 소개 페이지 MVP를 구현한다.
-- [x] Vote MVP를 구현한다.
-- [x] Search MVP를 구현한다.
-- [x] Newsletter UI를 구현한다.
-- [x] 제작자 등록 MVP를 구현한다.
+- [ ] 실패 테스트 또는 검증 시나리오를 먼저 작성하는 TDD 흐름을 프로젝트 명령에 반영한다.
+- [ ] 앱 스캐폴딩을 생성한다.
+- [ ] seed 데이터 로딩 방식을 구현한다.
+- [ ] Weekly board MVP를 구현한다.
+- [ ] Product 소개 페이지 MVP를 구현한다.
+- [ ] Vote MVP를 구현한다.
+- [ ] Search MVP를 구현한다.
+- [ ] Newsletter UI를 구현한다.
+- [ ] 제작자 등록 MVP를 구현한다.
 
 ## Agent Harness
 
