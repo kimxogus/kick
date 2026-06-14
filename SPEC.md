@@ -58,6 +58,7 @@ MVP 시연은 탐색자와 제작자 2개 플로우를 모두 보여준다.
 - Sites 접근, 권한, plugin, preview 정책, 배포 실패 문제가 생기면 정적 파일 로컬 실행 또는 localhost 실행으로 시연한다.
 - fallback 실행 명령은 앱 구현 단계에서 문서화한다.
 - MVP는 원격 DB, Auth, Storage 없이도 seed 데이터와 UI 흐름으로 시연 가능해야 한다.
+- MVP 앱은 Next.js App Router로 구현하며, API route와 UI를 같은 앱에서 관리한다.
 
 ## MVP 후순위 요구사항
 
@@ -125,11 +126,11 @@ MVP에서는 아래 방식으로 대체한다.
 
 - [x] 정식 서비스명: `kick`
 - [x] MVP 실행/배포 전략: Codex Sites 우선, 정적 파일 또는 localhost fallback
-- [ ] MVP 앱 프레임워크와 Sites 호환 빌드 방식
-- [ ] DB 선택: MVP 필수 제외, D1/R2 필요 여부는 지속 데이터 또는 업로드 요구가 생기면 결정
-- [ ] Auth 범위: 익명, 소셜 로그인, 사내 이메일 제한
-- [ ] 투표 정책: 1인 1표, 제품별 1표, 주간 reset 기준
-- [ ] Search 범위: 제품명/소개/태그만 검색할지, 전문 검색을 둘지
+- [x] MVP 앱 프레임워크: Next.js App Router
+- [x] DB 선택: MVP 필수 제외, seed fixture와 메모리 저장소 우선
+- [x] Auth 범위: MVP에서는 로그인 없이 local `viewer_id` 사용
+- [x] 투표 정책: MVP에서는 viewer/launch 조합 toggle, abuse 방지는 후속 ADR
+- [x] Search 범위: 제품명/소개/태그/대상 사용자 기반 검색
 - [ ] 제품 등록 승인 방식: 즉시 공개, 관리자 승인, 행사별 승인
 - [ ] 제작자 런칭 보조 v1 범위: Skill만 제공할지, MCP tool까지 제공할지
 - [ ] Skill 이름: `product-kick` 유지 또는 `kick-launch-assistant`로 변경

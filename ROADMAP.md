@@ -5,6 +5,7 @@
 - [x] MVP 시연 범위 확정
 - [ ] 탐색자/제작자 시연 시나리오 상세화
 - [x] MVP 실행/배포 전략 결정
+- [x] Next.js MVP 앱 스택 결정
 - [ ] Codex Sites 접근과 workspace 권한 확인
 - [ ] fallback 정적 파일 또는 localhost 실행 명령 결정
 - [ ] 탐색자 화면 구조 설계
@@ -14,6 +15,7 @@
 ## Next
 
 - [ ] 앱 스캐폴딩
+- [ ] 백엔드 API 계약 테스트 작성
 - [ ] Weekly board 구현
 - [ ] Product 소개 페이지 구현
 - [ ] Vote 구현

@@ -16,7 +16,7 @@
 ```text
 k-producthunt/
 ├── apps/
-│   ├── web/          # frontend/backend 통합 웹 앱 후보
+│   ├── web/          # Next.js App Router 기반 MVP 앱
 │   └── mcp-server/   # 제작자 런칭 보조 MCP 서버 후보
 ├── packages/
 │   ├── domain/       # 제품, 보드, 투표, 검색, contest 도메인 로직 후보
@@ -29,7 +29,7 @@ k-producthunt/
 └── .codex/
 ```
 
-이 구조는 후보이며 실제 앱 프레임워크와 Sites 호환 빌드 방식이 정해지기 전까지 생성하지 않는다.
+Next.js 앱은 `apps/web/`에 생성한다. MCP 서버는 MVP 앱 구현 이후 별도 ADR로 확정하기 전까지 후보로만 둔다.
 
 ## MVP 시스템 경계
 
@@ -130,7 +130,7 @@ newsletter_subscriptions
 - created_at
 ```
 
-인증 정책, 투표 정책, contest 범위, 앱 프레임워크가 확정되기 전까지 실제 schema로 고정하지 않는다.
+MVP 구현 계약은 [docs/contracts/mvp-data-and-api-contract.md](docs/contracts/mvp-data-and-api-contract.md)를 기준으로 한다. contest 범위와 장기 DB schema는 후속 ADR 전까지 고정하지 않는다.
 
 ## MVP 실행 및 배포 전략
 
@@ -163,15 +163,17 @@ MVP 실행과 배포는 [docs/adr/0003-application-stack-selection.md](docs/adr/
 - 이미지, 문서, 영상 업로드가 필요하면 R2를 검토한다.
 - 업로드 파일과 검색 가능한 metadata가 모두 필요하면 D1과 R2를 함께 검토한다.
 
-### 앱 프레임워크 평가 기준
+### MVP 앱 구조
 
-- 1주 내 앱 스캐폴딩과 Sites 호환 빌드가 가능한가
-- Sites 실패 시 정적 파일 또는 localhost로 시연 가능한가
-- Product 소개 페이지와 Weekly board UI를 빠르게 만들 수 있는가
-- seed 데이터 기반 콘텐츠 노출이 쉬운가
-- 제작자용 MCP/Skill 데모와 충돌하지 않는가
-- 백엔드 로직을 최소화하고 필요한 API만 둘 수 있는가
-- 발표 전 시간이 남으면 Skill 출력 payload를 backend 입력으로 재사용할 수 있는가
+- `apps/web/src/app/`: Next.js App Router 화면과 API route
+- `apps/web/src/app/api/`: route handler 기반 MVP backend/API
+- `apps/web/src/domain/`: 제품, board, vote, newsletter, 제작자 등록 도메인 로직
+- `apps/web/src/data/`: seed fixture와 메모리 저장소
+- `apps/web/src/components/`: UI 컴포넌트
+- `apps/web/src/lib/`: 클라이언트 유틸리티와 API 호출 helper
+- `apps/web/tests/`: 단위, API 계약, UI 흐름 테스트
+
+UI 구현 계약은 [docs/contracts/mvp-ui-contract.md](docs/contracts/mvp-ui-contract.md)를 기준으로 한다.
 
 ## Agent Harness 구조
 
@@ -186,12 +188,12 @@ MVP 실행과 배포는 [docs/adr/0003-application-stack-selection.md](docs/adr/
 ## 주요 미결정
 
 - [x] MVP 실행/배포 전략 ADR 확정
-- [ ] 앱 프레임워크와 Sites 호환 빌드 방식 결정
+- [x] 앱 프레임워크 결정: Next.js App Router
 - [ ] Codex Sites plugin 접근과 workspace 권한 확인
 - [ ] fallback 정적 파일 또는 localhost 실행 명령 문서화
-- [ ] Auth 정책 ADR 작성
-- [ ] Weekly vote 정책 ADR 작성
-- [ ] Search 구현 방식 ADR 작성
+- [x] MVP Auth 정책: local `viewer_id`
+- [x] MVP Weekly vote 정책: viewer/launch toggle
+- [x] MVP Search 구현 방식: seed 데이터 필터링
 - [ ] 제작자 런칭 보조 MCP 범위 ADR 확정
 - [ ] Skill 이름 변경 여부 결정
 - [ ] kick contest 데이터 모델 포함 여부 결정

@@ -8,6 +8,7 @@ AI로 제품을 만드는 사람은 빠르게 늘고 있지만, 제품의 강점
 - 서비스명은 `kick`으로 확정했습니다.
 - 저장소명 `k-producthunt`는 초기 가제와 코드명으로만 남아 있습니다.
 - 문서와 의사결정 기록을 먼저 세우는 초기 단계입니다.
+- MVP 애플리케이션 스택은 Next.js App Router로 일원화합니다.
 - MVP 실행과 배포는 OpenAI Codex Sites를 1순위로 고려합니다.
 - Sites 접근 또는 preview 제약이 생기면 정적 파일 로컬 실행 또는 localhost 실행으로 시연합니다.
 - 백엔드 로직은 최소화하고, UI 완성도와 제작자용 MCP/Skill 데모 완성도를 우선합니다.
@@ -47,6 +48,8 @@ MVP 우선 기능:
 - [ROADMAP.md](ROADMAP.md): 로드맵 템플릿
 - [docs/README.md](docs/README.md): 문서 구조와 갱신 규칙
 - [docs/adr/README.md](docs/adr/README.md): ADR 관리 방식
+- [docs/contracts/mvp-data-and-api-contract.md](docs/contracts/mvp-data-and-api-contract.md): MVP 데이터와 API 계약
+- [docs/contracts/mvp-ui-contract.md](docs/contracts/mvp-ui-contract.md): MVP UI 흐름 계약
 - [skills/README.md](skills/README.md): Codex/Claude 공용 Skill 관리 방식
 
 ## 개발 원칙
