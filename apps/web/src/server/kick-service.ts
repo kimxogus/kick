@@ -410,6 +410,9 @@ export function createKickService(): KickService {
     },
 
     createNewsletterSubscription(request) {
+      if (!isValidNewsletterSource(request.source)) {
+        throw new KickServiceError("VALIDATION_ERROR", "newsletter source를 확인해주세요.", ["source"]);
+      }
       if (!isValidEmail(request.email)) {
         throw new KickServiceError("VALIDATION_ERROR", "이메일 형식을 확인해주세요.", ["email"]);
       }
@@ -555,8 +558,12 @@ function getAvailableTags(launches: StoredLaunch[]): string[] {
   );
 }
 
-function isValidEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+function isValidEmail(email: unknown): email is string {
+  return typeof email === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+
+function isValidNewsletterSource(source: unknown): source is NewsletterRequest["source"] {
+  return source === "board" || source === "product" || source === "maker";
 }
 
 function toTag(value: string): string {
