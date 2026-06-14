@@ -27,9 +27,5 @@ export function jsonError(error: unknown): Response {
 }
 
 export async function readJson<T>(request: Request): Promise<T> {
-  try {
-    return (await request.json()) as T;
-  } catch {
-    throw new KickServiceError("VALIDATION_ERROR", "JSON 요청 본문을 확인해주세요.", ["body"]);
-  }
+  return (await request.json()) as T;
 }

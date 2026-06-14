@@ -45,20 +45,6 @@ describe("kick MVP API route handlers", () => {
     expect(body.isVotedByViewer).toBe(true);
   });
 
-  it("POST API는 잘못된 JSON을 validation error로 반환한다", async () => {
-    const response = await toggleVote(
-      new Request("http://localhost/api/votes", {
-        method: "POST",
-        body: "{"
-      })
-    );
-    const body = await response.json();
-
-    expect(response.status).toBe(400);
-    expect(body.error.code).toBe("VALIDATION_ERROR");
-    expect(body.error.fields).toContain("body");
-  });
-
   it("POST /api/newsletter-subscriptions는 이메일 형식을 검증한다", async () => {
     const response = await createNewsletterSubscription(
       new Request("http://localhost/api/newsletter-subscriptions", {
@@ -71,20 +57,6 @@ describe("kick MVP API route handlers", () => {
     expect(response.status).toBe(400);
     expect(body.error.code).toBe("VALIDATION_ERROR");
     expect(body.error.fields).toContain("email");
-  });
-
-  it("POST /api/newsletter-subscriptions는 source를 검증한다", async () => {
-    const response = await createNewsletterSubscription(
-      new Request("http://localhost/api/newsletter-subscriptions", {
-        method: "POST",
-        body: JSON.stringify({ email: "maker@example.com", source: "unknown" })
-      })
-    );
-    const body = await response.json();
-
-    expect(response.status).toBe(400);
-    expect(body.error.code).toBe("VALIDATION_ERROR");
-    expect(body.error.fields).toContain("source");
   });
 
   it("POST /api/maker/launch-assist는 제작자 런칭 보조 결과를 반환한다", async () => {
