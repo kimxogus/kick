@@ -32,6 +32,25 @@ MVP 우선 기능:
 - Codex Sites saved version 검토와 가능할 경우 발표용 배포 URL
 - fallback 정적 파일 또는 localhost 실행 경로
 
+## 로컬 실행
+
+MVP 앱은 `apps/web/`의 Next.js App Router 앱으로 구현합니다. Codex Sites 검증 전까지 발표 fallback은 production build 후 localhost에서 실행하는 방식을 기본으로 둡니다.
+
+```bash
+npm install
+npm run test:run -w apps/web
+npm run build -w apps/web
+npm run start -w apps/web -- --port 3000
+```
+
+UI smoke 검증은 별도 터미널에서 앱을 실행한 뒤 아래 명령으로 수행합니다.
+
+```bash
+npm run smoke:ui -w apps/web
+```
+
+개발 중 빠른 확인에는 `npm run dev -w apps/web -- --port 3000`을 사용할 수 있지만, 발표 fallback 검증은 `build`와 `start` 기준으로 기록합니다.
+
 후순위 기능:
 
 - Daily, Monthly, Yearly board

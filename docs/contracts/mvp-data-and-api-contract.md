@@ -324,6 +324,7 @@ type MakerSubmissionResponse = {
 
 - MVP에서는 공개 board에 자동 반영하지 않는다.
 - 제출 성공 화면과 데모용 preview만 제공한다.
+- UI는 제출 직후 preview 안정성을 위해 `submission` snapshot을 브라우저 localStorage에도 저장할 수 있다.
 
 ### `GET /api/maker/submissions/:id`
 
@@ -341,6 +342,7 @@ type MakerSubmissionDetailResponse = {
 
 - 서버 메모리 저장소에 없는 ID는 `NOT_FOUND`를 반환한다.
 - MVP에서는 제출 후보가 서버 재시작 후 사라질 수 있다.
+- `/submissions/[id]` 화면은 서버 메모리 저장소가 비어 있는 경우에도 제출 직후 같은 브라우저에서 preview를 볼 수 있도록 localStorage snapshot을 우선 사용할 수 있다.
 
 ## API 테스트 기준
 

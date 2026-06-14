@@ -1,0 +1,18 @@
+import { jsonError } from "@/server/api-response";
+import { kickService } from "@/server/service-singleton";
+
+type RouteContext = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
+
+export async function GET(request: Request, context: RouteContext): Promise<Response> {
+  try {
+    const { slug } = await context.params;
+    const url = new URL(request.url);
+    return Response.json(kickService.getProductDetail(slug, url.searchParams.get("viewer_id") ?? undefined));
+  } catch (error) {
+    return jsonError(error);
+  }
+}

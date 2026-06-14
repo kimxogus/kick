@@ -49,6 +49,11 @@ Next.js App Router 기준 화면:
 - newsletter submit success
 - validation error
 
+렌더링 정책:
+
+- vote count와 메모리 API 상태가 어긋나지 않도록 `/`는 Next.js dynamic render로 유지한다.
+- hydration 이후 `GET /api/boards/weekly`를 한 번 다시 호출해 route handler의 메모리 상태를 board UI에 동기화한다.
+
 ### Product 소개 페이지 `/products/[slug]`
 
 사용 API:
@@ -115,6 +120,12 @@ Next.js App Router 기준 화면:
 사용 API:
 
 - `GET /api/maker/submissions/:id`
+
+클라이언트 상태:
+
+- 제작자 제출 직후 `POST /api/maker/submissions` 응답의 `submission` snapshot을 브라우저 localStorage에 저장한다.
+- MVP preview 화면은 같은 브라우저에서 localStorage snapshot을 우선 사용한다.
+- 서버 메모리 저장소 기반 detail API는 같은 프로세스 내 조회와 후속 확장용 계약으로 유지한다.
 
 필수 UI:
 

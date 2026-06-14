@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160" role="img" aria-label="Lovable product preview">
+  <rect width="240" height="160" fill="#fdf2f8"/>
+  <path d="M120 112s-54-30-54-64c0-18 14-30 30-30 10 0 19 5 24 13 5-8 14-13 24-13 16 0 30 12 30 30 0 34-54 64-54 64z" fill="#be123c"/>
+  <rect x="62" y="122" width="116" height="12" rx="6" fill="#111827"/>
+</svg>
