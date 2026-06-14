@@ -143,7 +143,7 @@ MVP 실행과 배포는 [docs/adr/0003-application-stack-selection.md](docs/adr/
    - 간단한 backend/API는 Worker-compatible 범위로 제한하고, 상시 실행 Node 서버를 전제로 설계하지 않는다.
 2. 로컬 fallback 필수
    - Sites 접근, 권한, plugin, preview 정책, deploy 실패가 발생하면 정적 파일 로컬 실행 또는 localhost 실행으로 시연한다.
-   - fallback 실행 명령은 앱 구현 단계에서 README 또는 별도 실행 문서에 기록한다.
+   - fallback 실행 명령은 `README.md`의 로컬 실행 섹션에 기록한다.
 
 ### Codex Sites 운영 원칙
 
@@ -162,16 +162,18 @@ MVP 실행과 배포는 [docs/adr/0003-application-stack-selection.md](docs/adr/
 - 제품 데이터가 방문 사이에 유지되어야 하면 D1을 검토한다.
 - 이미지, 문서, 영상 업로드가 필요하면 R2를 검토한다.
 - 업로드 파일과 검색 가능한 metadata가 모두 필요하면 D1과 R2를 함께 검토한다.
+- MVP의 vote와 제출 후보는 메모리 상태를 사용하므로, board 화면은 static prerender가 아니라 dynamic render로 유지한다.
+- Next.js production에서는 page와 API route의 메모리 인스턴스가 항상 같은 상태라고 전제하지 않는다. 따라서 board UI는 hydration 이후 `GET /api/boards/weekly`를 한 번 다시 읽어 route handler 상태와 맞춘다.
 
 ### MVP 앱 구조
 
 - `apps/web/src/app/`: Next.js App Router 화면과 API route
 - `apps/web/src/app/api/`: route handler 기반 MVP backend/API
-- `apps/web/src/domain/`: 제품, board, vote, newsletter, 제작자 등록 도메인 로직
-- `apps/web/src/data/`: seed fixture와 메모리 저장소
+- `apps/web/src/server/`: seed fixture, 메모리 저장소, 제품/board/vote/newsletter/제작자 등록 서비스 로직
 - `apps/web/src/components/`: UI 컴포넌트
-- `apps/web/src/lib/`: 클라이언트 유틸리티와 API 호출 helper
-- `apps/web/tests/`: 단위, API 계약, UI 흐름 테스트
+- `apps/web/src/lib/`: local viewer ID와 제출 preview 저장 등 클라이언트 유틸리티
+- `apps/web/src/test/`: Vitest 테스트 setup
+- `apps/web/tests/`: Playwright 기반 UI smoke 검증
 
 UI 구현 계약은 [docs/contracts/mvp-ui-contract.md](docs/contracts/mvp-ui-contract.md)를 기준으로 한다.
 
@@ -190,7 +192,7 @@ UI 구현 계약은 [docs/contracts/mvp-ui-contract.md](docs/contracts/mvp-ui-co
 - [x] MVP 실행/배포 전략 ADR 확정
 - [x] 앱 프레임워크 결정: Next.js App Router
 - [ ] Codex Sites plugin 접근과 workspace 권한 확인
-- [ ] fallback 정적 파일 또는 localhost 실행 명령 문서화
+- [x] fallback localhost 실행 명령 문서화
 - [x] MVP Auth 정책: local `viewer_id`
 - [x] MVP Weekly vote 정책: viewer/launch toggle
 - [x] MVP Search 구현 방식: seed 데이터 필터링
