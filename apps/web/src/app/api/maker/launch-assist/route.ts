@@ -4,7 +4,7 @@ import { kickService } from "@/server/service-singleton";
 
 export async function POST(request: Request): Promise<Response> {
   try {
-    return Response.json(kickService.createLaunchAssist(await readJson<MakerSubmissionDraft>(request)));
+    return Response.json(await kickService.createLaunchAssist(await readJson<MakerSubmissionDraft>(request)));
   } catch (error) {
     return jsonError(error);
   }

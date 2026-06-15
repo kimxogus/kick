@@ -185,6 +185,14 @@ export type MakerSubmissionDetailResponse = {
   submission: MakerSubmission;
 };
 
+export type AdminResetResponse = {
+  status: "reset";
+  storage: "postgres" | "memory";
+  products: number;
+  launches: number;
+  contests: number;
+};
+
 export class KickServiceError extends Error {
   constructor(
     public readonly code: "VALIDATION_ERROR" | "NOT_FOUND",
@@ -196,23 +204,24 @@ export class KickServiceError extends Error {
 }
 
 export type KickService = {
-  getWeeklyBoard(request: WeeklyBoardRequest): WeeklyBoardResponse;
-  getProductDetail(slug: string, viewerId?: string): ProductDetailResponse;
-  getContests(): ContestListResponse;
-  toggleVote(request: VoteRequest): VoteResponse;
-  createNewsletterSubscription(request: NewsletterRequest): NewsletterResponse;
-  createLaunchAssist(request: MakerSubmissionDraft): LaunchAssistResponse;
-  createMakerSubmission(request: MakerSubmissionRequest): MakerSubmissionResponse;
-  getMakerSubmission(id: string): MakerSubmissionDetailResponse;
+  getWeeklyBoard(request: WeeklyBoardRequest): Promise<WeeklyBoardResponse>;
+  getProductDetail(slug: string, viewerId?: string): Promise<ProductDetailResponse>;
+  getContests(): Promise<ContestListResponse>;
+  toggleVote(request: VoteRequest): Promise<VoteResponse>;
+  createNewsletterSubscription(request: NewsletterRequest): Promise<NewsletterResponse>;
+  createLaunchAssist(request: MakerSubmissionDraft): Promise<LaunchAssistResponse>;
+  createMakerSubmission(request: MakerSubmissionRequest): Promise<MakerSubmissionResponse>;
+  getMakerSubmission(id: string): Promise<MakerSubmissionDetailResponse>;
+  resetToSeed(): Promise<AdminResetResponse>;
 };
 
-type StoredLaunch = Omit<Launch, "isVotedByViewer">;
-type StoredContest = Omit<Contest, "featuredLaunches"> & {
+export type StoredLaunch = Omit<Launch, "isVotedByViewer">;
+export type StoredContest = Omit<Contest, "featuredLaunches"> & {
   featuredLaunchIds: string[];
 };
 type UnknownRecord = Record<string, unknown>;
 
-type KickState = {
+export type KickState = {
   board: Omit<Board, "launches">;
   launches: StoredLaunch[];
   contests: StoredContest[];
@@ -284,7 +293,7 @@ const baseMakers: Record<string, Maker> = {
   }
 };
 
-const seedLaunches: StoredLaunch[] = [
+export const seedLaunches: StoredLaunch[] = [
   {
     id: "launch_cursor",
     rank: 1,
@@ -691,7 +700,7 @@ const seedLaunches: StoredLaunch[] = [
   }
 ];
 
-const boardBase: Omit<Board, "launches"> = {
+export const boardBase: Omit<Board, "launches"> = {
   id: "board_weekly_2026_24",
   period: "weekly",
   title: "이번 주 kick 제품",
@@ -699,7 +708,7 @@ const boardBase: Omit<Board, "launches"> = {
   endsOn: "2026-06-14"
 };
 
-const contestFixtures: StoredContest[] = [
+export const contestFixtures: StoredContest[] = [
   {
     id: "contest_ai_workflow",
     slug: "ai-workflow-challenge",
@@ -763,17 +772,10 @@ const contestFixtures: StoredContest[] = [
 ];
 
 export function createKickService(): KickService {
-  const state: KickState = {
-    board: { ...boardBase },
-    launches: structuredClone(seedLaunches),
-    contests: structuredClone(contestFixtures),
-    votes: new Map(),
-    subscriptions: [],
-    submissions: []
-  };
+  let state = createSeedState();
 
   return {
-    getWeeklyBoard(request) {
+    async getWeeklyBoard(request) {
       const q = request.q?.trim().toLowerCase() ?? "";
       const tag = request.tag?.trim() || null;
       const launches = state.launches
@@ -795,7 +797,7 @@ export function createKickService(): KickService {
       };
     },
 
-    getProductDetail(slug, viewerId) {
+    async getProductDetail(slug, viewerId) {
       const launch = state.launches.find((candidate) => candidate.product.slug === slug);
       if (!launch) {
         throw new KickServiceError("NOT_FOUND", "제품을 찾을 수 없습니다.", ["slug"]);
@@ -813,7 +815,7 @@ export function createKickService(): KickService {
       };
     },
 
-    getContests() {
+    async getContests() {
       return {
         contests: state.contests.map((contest) => ({
           id: contest.id,
@@ -833,7 +835,7 @@ export function createKickService(): KickService {
       };
     },
 
-    toggleVote(request) {
+    async toggleVote(request) {
       const body = requireBodyRecord(request);
       const invalidFields: string[] = [];
       const launchId = collectRequiredText(body, "launchId", invalidFields);
@@ -863,7 +865,7 @@ export function createKickService(): KickService {
       };
     },
 
-    createNewsletterSubscription(request) {
+    async createNewsletterSubscription(request) {
       const body = requireBodyRecord(request);
       const source = body.source;
       if (!isValidNewsletterSource(source)) {
@@ -885,7 +887,7 @@ export function createKickService(): KickService {
       return { subscription };
     },
 
-    createLaunchAssist(request) {
+    async createLaunchAssist(request) {
       const body = requireBodyRecord(request);
       const invalidFields: string[] = [];
       const productName = collectRequiredText(body, "productName", invalidFields);
@@ -948,7 +950,7 @@ export function createKickService(): KickService {
       };
     },
 
-    createMakerSubmission(request) {
+    async createMakerSubmission(request) {
       const body = requireBodyRecord(request);
       const invalidFields: string[] = [];
       const viewerId = collectRequiredText(body, "viewerId", invalidFields);
@@ -971,17 +973,43 @@ export function createKickService(): KickService {
       };
     },
 
-    getMakerSubmission(id) {
+    async getMakerSubmission(id) {
       const submission = state.submissions.find((candidate) => candidate.id === id);
       if (!submission) {
         throw new KickServiceError("NOT_FOUND", "제출 후보를 찾을 수 없습니다.", ["id"]);
       }
       return { submission };
+    },
+
+    async resetToSeed() {
+      state = createSeedState();
+      return createResetResponse("memory", state);
     }
   };
 }
 
-function withViewerVote(launch: StoredLaunch, state: KickState, viewerId?: string): Launch {
+export function createSeedState(): KickState {
+  return {
+    board: { ...boardBase },
+    launches: structuredClone(seedLaunches),
+    contests: structuredClone(contestFixtures),
+    votes: new Map(),
+    subscriptions: [],
+    submissions: []
+  };
+}
+
+export function createResetResponse(storage: AdminResetResponse["storage"], state: Pick<KickState, "launches" | "contests">): AdminResetResponse {
+  return {
+    status: "reset",
+    storage,
+    products: new Set(state.launches.map((launch) => launch.product.id)).size,
+    launches: state.launches.length,
+    contests: state.contests.length
+  };
+}
+
+export function withViewerVote(launch: StoredLaunch, state: KickState, viewerId?: string): Launch {
   return {
     ...launch,
     product: {
@@ -998,7 +1026,7 @@ function withViewerVote(launch: StoredLaunch, state: KickState, viewerId?: strin
   };
 }
 
-function matchesSearch(product: Product, q: string): boolean {
+export function matchesSearch(product: Product, q: string): boolean {
   if (!q) {
     return true;
   }
@@ -1015,7 +1043,7 @@ function matchesSearch(product: Product, q: string): boolean {
   return haystack.includes(q);
 }
 
-function getAvailableTags(launches: StoredLaunch[]): string[] {
+export function getAvailableTags(launches: StoredLaunch[]): string[] {
   return [...new Set(launches.flatMap((launch) => launch.product.tags))].sort((left, right) =>
     left.localeCompare(right)
   );

@@ -20,13 +20,16 @@
 
 - [x] MVP 실행/배포 전략 ADR을 `Accepted`로 확정한다.
 - [x] 앱 프레임워크를 Next.js App Router로 결정한다.
-- [x] MVP DB는 fixture와 메모리 저장소로 결정한다.
+- [x] MVP DB는 Neon Postgres 우선, `DATABASE_URL` 없는 환경은 fixture/memory fallback으로 결정한다.
 - [x] MVP Auth는 로그인 없이 local `viewer_id`로 결정한다.
 - [x] fallback localhost 실행 명령을 문서화한다.
-- [ ] Codex Sites plugin 접근 가능 여부를 확인한다.
-- [ ] Business/Enterprise workspace 권한과 RBAC 필요 여부를 확인한다.
-- [ ] Sites saved version 생성 절차를 검증한다.
-- [ ] 발표용 Sites 배포 URL 확보 절차를 검증한다.
+- [x] Codex Sites plugin 접근 가능 여부를 확인한다.
+- [x] Vercel + Neon Postgres 영속화 ADR을 작성한다.
+- [x] Vercel Git Integration과 GitHub Actions CI 역할을 분리한다.
+- [ ] Vercel 프로젝트에 `DATABASE_URL`을 설정한다.
+- [ ] Vercel 프로젝트 Root Directory를 `apps/web`으로 설정한다.
+- [ ] GitHub branch protection에 `CI / verify` required check를 설정한다.
+- [ ] 발표 전 `npm run db:reset -w apps/web` 또는 `/admin`으로 seed 상태를 복원한다.
 - [ ] 이미지/카드뉴스 생성·저장 방식을 결정한다.
 - [ ] Skill→MCP 전환 시 서버 API 스펙을 정의한다.
 - [ ] 운영자 큐레이션 백엔드와 AI Slop 필터링 후속 ADR을 작성한다.
@@ -39,6 +42,8 @@
 - [x] `docs/adr/0003-application-stack-selection.md`를 MVP 실행/배포 전략으로 갱신한다.
 - [x] `docs/research/2026-06-13-product-and-agent-flow-research.md`에 Product Hunt 재수집과 Codex Sites 근거를 반영한다.
 - [x] `docs/adr/0006-nextjs-mvp-application-stack.md`에 Next.js 앱 스택 결정을 기록한다.
+- [x] `docs/adr/0007-vercel-neon-postgres-persistence.md`에 Vercel + Neon Postgres 영속화 결정을 기록한다.
+- [x] `docs/deployment/vercel.md`에 Vercel Git Integration과 CI 운영 방식을 기록한다.
 - [x] `docs/contracts/mvp-data-and-api-contract.md`에 MVP 데이터/API 계약을 작성한다.
 - [x] `docs/contracts/mvp-ui-contract.md`에 MVP UI 계약을 작성한다.
 - [x] `docs/pitch.md`에 콘테스트 피치와 심사 어필 전략을 정리한다.
@@ -60,6 +65,9 @@
 - [x] Newsletter UI를 구현한다.
 - [x] 제작자 등록 MVP를 구현한다.
 - [x] 공개 contest 읽기 전용 화면을 구현한다.
+- [x] Neon Postgres schema와 seed reset 스크립트를 구현한다.
+- [x] `/admin` direct reset 화면을 구현한다.
+- [x] GitHub Actions test/lint/build와 coverage report workflow를 구성한다.
 - [ ] 라이브 데모와 녹화 백업을 준비한다.
 
 ## Agent Harness

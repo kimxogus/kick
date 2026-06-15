@@ -107,12 +107,12 @@ MVP 시연은 탐색자와 제작자 2개 플로우를 모두 보여준다.
 
 ## MVP 실행 및 배포 요구사항
 
-- MVP 실행과 배포는 OpenAI Codex Sites를 1순위로 고려한다.
-- 발표 전에는 Sites saved version을 만들고 검토한다.
-- 가능하면 승인된 saved version을 발표용 URL로 deploy한다.
-- Sites 접근, 권한, plugin, preview 정책, 배포 실패 문제가 생기면 정적 파일 로컬 실행 또는 localhost 실행으로 시연한다.
-- fallback 실행 명령은 앱 구현 단계에서 문서화한다.
-- MVP는 원격 DB, Auth, Storage 없이도 초기 콘텐츠와 UI 흐름으로 시연 가능해야 한다.
+- MVP 실행과 배포는 Vercel을 우선한다.
+- 데이터 영속화는 Neon Postgres를 우선한다.
+- `DATABASE_URL`이 있으면 제품, board, launch, contest seed와 vote, newsletter, 제작자 제출 후보를 Postgres에 저장한다.
+- `DATABASE_URL`이 없으면 fixture/memory store로 로컬 개발과 테스트가 가능해야 한다.
+- 발표 전에는 CLI 또는 `/admin` direct route로 현재 seed 상태를 복원할 수 있어야 한다.
+- fallback 실행 명령은 README에 문서화한다.
 - MVP 앱은 Next.js App Router로 구현하며, route handler와 UI를 같은 앱에서 관리한다.
 
 ## MVP 후순위 요구사항
@@ -141,7 +141,7 @@ MVP에서는 아래 방식으로 대체한다.
 
 - 1주일 내 MVP 시연이 가능해야 한다.
 - 사내 행사/콘테스트 목적이므로 무료 또는 저비용 실행/배포를 우선한다.
-- Codex Sites를 우선하되, Sites 실패 시 로컬 fallback으로 시연 가능해야 한다.
+- Vercel을 우선하되, 배포 실패 시 로컬 fallback으로 시연 가능해야 한다.
 - 백엔드 로직은 최소화하고 UI와 제작자용 MCP/Skill 완성도를 우선한다.
 - Codex와 Claude Code 모두에서 개발 경험이 동작해야 한다.
 - 구현 전 문서와 ADR을 먼저 갱신한다.
@@ -151,13 +151,14 @@ MVP에서는 아래 방식으로 대체한다.
 ## 결정 사항
 
 - [x] 정식 서비스명: `kick`
-- [x] MVP 실행/배포 전략: Codex Sites 우선, 정적 파일 또는 localhost fallback
+- [x] MVP 실행/배포 전략: Vercel 우선, localhost fallback
 - [x] MVP 앱 프레임워크: Next.js App Router
-- [x] DB 선택: MVP 필수 제외, fixture와 메모리 저장소 우선
+- [x] DB 선택: Neon Postgres 우선, `DATABASE_URL` 없는 환경은 fixture/memory fallback
 - [x] Auth 범위: MVP에서는 로그인 없이 local `viewer_id` 사용
 - [x] 투표 정책: MVP에서는 viewer/launch 조합 toggle, abuse 방지는 후속 ADR
 - [x] Search 범위: 제품명/소개/태그/대상 사용자 기반 검색
 - [x] Contest MVP 범위: 사용자용 읽기 전용 목록만 포함
+- [x] Seed reset: CLI와 `/admin` direct route로 현재 seed 상태 복원
 
 ## 결정 필요 사항
 

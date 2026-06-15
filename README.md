@@ -8,9 +8,10 @@ AI로 제품을 만드는 사람은 빠르게 늘고 있지만, 제품의 강점
 - 서비스명은 `kick`으로 확정했습니다. 저장소명 `k-producthunt`는 초기 가제와 코드명으로만 남아 있습니다.
 - 문서와 의사결정 기록을 먼저 세우는 초기 단계입니다.
 - MVP 애플리케이션 스택은 Next.js App Router로 일원화합니다.
-- MVP 실행과 배포는 OpenAI Codex Sites를 1순위로 고려합니다.
-- Sites 접근 또는 preview 제약이 생기면 정적 파일 로컬 실행 또는 localhost 실행으로 시연합니다.
-- 별도 백엔드와 원격 DB는 두지 않고, Next.js route handler와 fixture/memory store로 MVP API를 구현합니다.
+- MVP 실행과 배포는 Vercel Git Integration을 우선하고, GitHub Actions는 test/lint/build와 coverage report만 담당합니다.
+- 로컬 `next start` 실행은 fallback으로 유지합니다.
+- 데이터는 `DATABASE_URL`이 있으면 Neon Postgres를 사용하고, 없으면 Next.js route handler와 fixture/memory store로 동작합니다.
+- 시연 전에는 CLI 또는 `/admin` direct route에서 현재 seed 제품, board, contest 상태로 reset할 수 있게 합니다.
 - 모든 문서는 팀 논의를 통해 계속 갱신되는 draft입니다.
 
 ## MVP 방향
@@ -29,18 +30,32 @@ MVP 우선 기능:
 - Newsletter UI
 - 실제 서비스 기반 초기 콘텐츠
 - 공개 contest 읽기 전용 페이지
-- Codex Sites saved version 검토와 가능할 경우 발표용 배포 URL
-- fallback 정적 파일 또는 localhost 실행 경로
+- Vercel 발표용 배포 URL
+- Neon Postgres 영속 저장과 seed reset 경로
+- GitHub Actions 기반 test/lint/build와 coverage report
+- fallback localhost 실행 경로
 
 ## 로컬 실행
 
-MVP 앱은 `apps/web/`의 Next.js App Router 앱으로 구현합니다. Codex Sites 검증 전까지 발표 fallback은 production build 후 localhost에서 실행하는 방식을 기본으로 둡니다.
+MVP 앱은 `apps/web/`의 Next.js App Router 앱으로 구현합니다. Vercel 배포 전후에도 발표 fallback은 production build 후 localhost에서 실행하는 방식을 유지합니다.
 
 ```bash
 npm install
 npm run test:run -w apps/web
 npm run build -w apps/web
 npm run start -w apps/web -- --port 3000
+```
+
+Neon Postgres를 사용할 때는 `apps/web/.env.local` 또는 Vercel 환경 변수에 `DATABASE_URL`을 설정한 뒤 seed reset을 실행합니다.
+
+```bash
+npm run db:reset -w apps/web
+```
+
+Coverage report는 아래 명령으로 생성합니다. Coverage는 MVP 단계에서 품질 진단용으로만 사용하며 merge 차단 threshold는 두지 않습니다.
+
+```bash
+npm run test:coverage -w apps/web
 ```
 
 UI smoke 검증은 별도 터미널에서 앱을 실행한 뒤 아래 명령으로 수행합니다.
@@ -72,6 +87,7 @@ npm run smoke:ui -w apps/web
 - [docs/adr/README.md](docs/adr/README.md): ADR 관리 방식
 - [docs/contracts/mvp-data-and-api-contract.md](docs/contracts/mvp-data-and-api-contract.md): MVP 데이터와 API 계약
 - [docs/contracts/mvp-ui-contract.md](docs/contracts/mvp-ui-contract.md): MVP UI 흐름 계약
+- [docs/deployment/vercel.md](docs/deployment/vercel.md): Vercel Git Integration, Neon 환경 변수, GitHub Actions CI 운영 방식
 - [skills/README.md](skills/README.md): Codex/Claude 공용 Skill 관리 방식
 
 ## 개발 원칙

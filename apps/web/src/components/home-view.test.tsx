@@ -5,8 +5,8 @@ import { HomeView } from "./home-view";
 import { createKickService } from "@/server/kick-service";
 
 describe("HomeView", () => {
-  it("Weekly board 제품을 보여주고 검색어로 필터링한다", () => {
-    const initialResponse = createKickService().getWeeklyBoard({});
+  it("Weekly board 제품을 보여주고 검색어로 필터링한다", async () => {
+    const initialResponse = await createKickService().getWeeklyBoard({});
 
     render(<HomeView initialResponse={initialResponse} />);
 
@@ -42,8 +42,8 @@ describe("HomeView", () => {
     expect(screen.queryByRole("link", { name: "Cursor" })).toBeNull();
   });
 
-  it("샘플 제품 category 검색과 emoji thumbnail을 보여준다", () => {
-    const initialResponse = createKickService().getWeeklyBoard({});
+  it("샘플 제품 category 검색과 emoji thumbnail을 보여준다", async () => {
+    const initialResponse = await createKickService().getWeeklyBoard({});
 
     render(<HomeView initialResponse={initialResponse} />);
 
@@ -57,7 +57,7 @@ describe("HomeView", () => {
   });
 
   it("vote 버튼을 누르면 optimistic count와 선택 상태를 갱신한다", async () => {
-    const initialResponse = createKickService().getWeeklyBoard({});
+    const initialResponse = await createKickService().getWeeklyBoard({});
 
     render(
       <HomeView

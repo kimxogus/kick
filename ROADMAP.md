@@ -9,7 +9,8 @@
 - [x] 탐색자 화면 구조 설계
 - [x] MVP UI/API 계약 작성
 - [ ] 탐색자/제작자 시연 시나리오 상세화
-- [ ] Codex Sites 접근과 workspace 권한 확인
+- [x] Codex Sites 접근과 workspace 권한 확인
+- [x] Vercel + Neon Postgres 영속화 결정
 - [ ] 제작자 MCP/Skill 데모 범위 설계
 - [ ] 등록 Skill이 보장할 품질 기준 정의
 
@@ -26,8 +27,9 @@
 - [x] 공개 contest 읽기 전용 화면 구현
 - [ ] 사내 시연 데이터 보강
 - [ ] 라이브 데모와 녹화 백업 준비
-- [ ] Sites saved version 검토
-- [ ] 가능할 경우 발표용 Sites 배포 URL 확보
+- [x] Neon Postgres schema와 seed reset 구현
+- [ ] Vercel preview 배포 URL 확보
+- [ ] 발표 전 seed reset과 smoke 확인
 
 ## Later
 

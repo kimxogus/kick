@@ -5,8 +5,8 @@ import { ContestView } from "./contest-view";
 import { createKickService } from "@/server/kick-service";
 
 describe("ContestView", () => {
-  it("공개 contest 목록을 읽기 전용 사용자 화면으로 보여준다", () => {
-    render(<ContestView initialResponse={createKickService().getContests()} />);
+  it("공개 contest 목록을 읽기 전용 사용자 화면으로 보여준다", async () => {
+    render(<ContestView initialResponse={await createKickService().getContests()} />);
 
     expect(screen.getByRole("heading", { name: "공개 콘테스트" })).toBeTruthy();
     expect(screen.getByText("AI Workflow Challenge")).toBeTruthy();

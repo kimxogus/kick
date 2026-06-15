@@ -11,6 +11,7 @@ Next.js App Router 기준 화면:
 - `/maker`: 제작자 런칭 보조와 등록 후보 준비
 - `/submissions/[id]`: 제작자 제출 후보 preview
 - `/contest`: 공개 contest 읽기 전용 목록
+- `/admin`: direct URL로만 접근하는 발표 전 seed reset 화면
 
 ## 공통 UI 원칙
 
@@ -20,7 +21,7 @@ Next.js App Router 기준 화면:
 - 현재 실제 서비스 제품과 기존 샘플 HTML 제품을 함께 보여줘 MVP 화면의 콘텐츠 밀도를 확보한다.
 - 사용자 화면에는 `seed`, `더미`, `데모 미연결`, `표시용`, 관리자/운영자 CTA 같은 내부 구현 문구를 노출하지 않는다.
 - CTA는 vote, 제품 상세 보기, newsletter 구독, 제작자 등록 보조 시작에 집중한다.
-- 관리자 기능 진입은 향후 `/admin` route에서만 제공한다. 이번 MVP PR에는 `/admin` route와 관리자 버튼을 만들지 않는다.
+- `/admin` route는 direct URL로만 접근하고 사용자 화면에는 관리자 진입 버튼이나 링크를 만들지 않는다.
 - 운영자 큐레이션 화면과 결제/후원 UI는 MVP에서 제외한다.
 - 정적 HTML 참고안의 warm orange 컬러, 제품 카드 hover, emoji thumbnail, pill형 vote 버튼, 랭킹 badge, 카드뉴스 시각 패턴을 Bootstrap dependency 없이 Next.js/CSS로 이식한다.
 
@@ -155,8 +156,8 @@ Next.js App Router 기준 화면:
 클라이언트 상태:
 
 - 제작자 제출 직후 `POST /api/maker/submissions` 응답의 `submission` snapshot을 브라우저 localStorage에 저장한다.
-- MVP preview 화면은 같은 브라우저에서 localStorage snapshot을 우선 사용한다.
-- 서버 메모리 저장소 기반 detail API는 같은 프로세스 내 조회와 후속 확장용 계약으로 유지한다.
+- MVP preview 화면은 같은 브라우저에서 localStorage snapshot을 우선 사용해 fallback 환경에서도 제출 직후 preview가 안정적으로 보이게 한다.
+- `DATABASE_URL`이 있으면 detail API는 Postgres 저장소를 조회하고, 없으면 memory store를 조회한다.
 
 필수 UI:
 
@@ -178,6 +179,7 @@ UI 구현 후 `@컴퓨터` 또는 브라우저 자동화로 아래를 확인한�
 - 태그 클릭 시 제품 목록이 필터링된다.
 - vote 버튼을 누르면 vote count와 선택 상태가 바뀐다.
 - 제품 카드를 클릭하면 `/products/[slug]`로 이동한다.
+- `/admin` direct route에서 seed reset을 실행하면 완료 상태가 보인다.
 - 제품 상세에서 Kick Point, 카드뉴스, 타겟별 홍보 메시지와 vote 버튼이 보인다.
 - `/contest`에서 공개 contest 목록과 대표 제품 링크가 보인다.
 - `/contest`에 contest 개최, 상금 등록, 관리자 CTA가 보이지 않는다.

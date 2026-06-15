@@ -12,8 +12,8 @@ describe("kick MVP backend service", () => {
     service = createKickService();
   });
 
-  it("Weekly board를 rank 순서와 필터 metadata로 반환한다", () => {
-    const response = service.getWeeklyBoard({});
+  it("Weekly board를 rank 순서와 필터 metadata로 반환한다", async () => {
+    const response = await service.getWeeklyBoard({});
 
     expect(response.board.period).toBe("weekly");
     expect(response.board.launches.length).toBeGreaterThanOrEqual(10);
@@ -25,8 +25,8 @@ describe("kick MVP backend service", () => {
     expect(response.board.launches.find((launch) => launch.product.slug === "momento")?.product.emoji).toBe("📓");
   });
 
-  it("검색어와 태그로 Weekly board launch를 필터링한다", () => {
-    const response = service.getWeeklyBoard({
+  it("검색어와 태그로 Weekly board launch를 필터링한다", async () => {
+    const response = await service.getWeeklyBoard({
       q: "developer",
       tag: "Productivity"
     });
@@ -37,16 +37,16 @@ describe("kick MVP backend service", () => {
     expect(response.filters.tag).toBe("Productivity");
   });
 
-  it("샘플 HTML에서 되살린 제품을 category와 태그로 검색한다", () => {
-    const categoryResponse = service.getWeeklyBoard({ q: "여행" });
-    const tagResponse = service.getWeeklyBoard({ tag: "반려동물" });
+  it("샘플 HTML에서 되살린 제품을 category와 태그로 검색한다", async () => {
+    const categoryResponse = await service.getWeeklyBoard({ q: "여행" });
+    const tagResponse = await service.getWeeklyBoard({ tag: "반려동물" });
 
     expect(categoryResponse.board.launches.map((launch) => launch.product.slug)).toContain("menuddak");
     expect(tagResponse.board.launches.map((launch) => launch.product.slug)).toEqual(["pixelmong"]);
   });
 
-  it("제품 slug로 상세와 관련 launch를 반환한다", () => {
-    const detail = service.getProductDetail("cursor", "viewer_test");
+  it("제품 slug로 상세와 관련 launch를 반환한다", async () => {
+    const detail = await service.getProductDetail("cursor", "viewer_test");
 
     expect(detail.product.name).toBe("Cursor");
     expect(detail.launch.product.slug).toBe("cursor");
@@ -57,8 +57,8 @@ describe("kick MVP backend service", () => {
     expect(detail.relatedLaunches.every((launch) => launch.product.slug !== "cursor")).toBe(true);
   });
 
-  it("공개 contest 목록을 읽기 전용 모델로 반환한다", () => {
-    const response = service.getContests();
+  it("공개 contest 목록을 읽기 전용 모델로 반환한다", async () => {
+    const response = await service.getContests();
 
     expect(response.contests.length).toBeGreaterThanOrEqual(5);
     expect(response.contests[0]?.title).toContain("AI");
@@ -67,28 +67,28 @@ describe("kick MVP backend service", () => {
     expect(response.contests[0]?.featuredLaunches[0]?.product.slug).toBeTruthy();
   });
 
-  it("같은 viewer와 launch 조합에서 vote를 toggle한다", () => {
-    const launchId = service.getWeeklyBoard({}).board.launches[0]!.id;
+  it("같은 viewer와 launch 조합에서 vote를 toggle한다", async () => {
+    const launchId = (await service.getWeeklyBoard({})).board.launches[0]!.id;
 
-    const voted = service.toggleVote({ launchId, viewerId: "viewer_1" });
-    const unvoted = service.toggleVote({ launchId, viewerId: "viewer_1" });
+    const voted = await service.toggleVote({ launchId, viewerId: "viewer_1" });
+    const unvoted = await service.toggleVote({ launchId, viewerId: "viewer_1" });
 
     expect(voted.isVotedByViewer).toBe(true);
     expect(voted.voteCount).toBeGreaterThan(unvoted.voteCount);
     expect(unvoted.isVotedByViewer).toBe(false);
   });
 
-  it("잘못된 newsletter 이메일을 validation error로 거부한다", () => {
-    expect(() =>
+  it("잘못된 newsletter 이메일을 validation error로 거부한다", async () => {
+    await expect(
       service.createNewsletterSubscription({
         email: "not-an-email",
         source: "board"
       })
-    ).toThrow(/이메일/);
+    ).rejects.toThrow(/이메일/);
   });
 
-  it("제작자 런칭 보조 결과와 추가 질문을 생성한다", () => {
-    const response = service.createLaunchAssist({
+  it("제작자 런칭 보조 결과와 추가 질문을 생성한다", async () => {
+    const response = await service.createLaunchAssist({
       productName: "DemoFlow",
       descriptionDraft: "시연 흐름을 정리하는 도구",
       targetUsers: [],
@@ -102,8 +102,8 @@ describe("kick MVP backend service", () => {
     expect(response.result.followUpQuestions).toContain("제품이 해결하려는 문제를 한 문장으로 알려주세요.");
   });
 
-  it("제작자 제출 후보를 저장하고 ID로 다시 조회한다", () => {
-    const created = service.createMakerSubmission({
+  it("제작자 제출 후보를 저장하고 ID로 다시 조회한다", async () => {
+    const created = await service.createMakerSubmission({
       viewerId: "viewer_maker",
       payload: {
         productName: "DemoFlow",
@@ -115,10 +115,48 @@ describe("kick MVP backend service", () => {
       }
     });
 
-    const detail = service.getMakerSubmission(created.submission.id);
+    const detail = await service.getMakerSubmission(created.submission.id);
 
     expect(created.status).toBe("received");
     expect(created.previewUrl).toBe(`/submissions/${created.submission.id}`);
     expect(detail.submission.payload.productName).toBe("DemoFlow");
+  });
+
+  it("seed reset으로 write 데이터를 지우고 현재 seed 상태를 복원한다", async () => {
+    const launchId = (await service.getWeeklyBoard({})).board.launches[0]!.id;
+    const beforeVote = (await service.getWeeklyBoard({})).board.launches[0]!.voteCount;
+    const created = await service.createMakerSubmission({
+      viewerId: "viewer_reset",
+      payload: {
+        productName: "ResetFlow",
+        tagline: "ResetFlow로 발표 준비를 정리하세요.",
+        description: "seed reset 검증용 제출입니다.",
+        websiteUrl: "https://example.com",
+        tags: ["Reset"],
+        makerNote: "초기화 대상"
+      }
+    });
+
+    await service.toggleVote({ launchId, viewerId: "viewer_reset" });
+    await service.createNewsletterSubscription({
+      email: "reset@example.com",
+      source: "board"
+    });
+
+    const reset = await service.resetToSeed();
+    const afterBoard = await service.getWeeklyBoard({ viewerId: "viewer_reset" });
+    const afterContests = await service.getContests();
+
+    expect(reset).toEqual({
+      status: "reset",
+      storage: "memory",
+      products: 10,
+      launches: 10,
+      contests: 5
+    });
+    expect(afterBoard.board.launches[0]!.voteCount).toBe(beforeVote);
+    expect(afterBoard.board.launches[0]!.isVotedByViewer).toBe(false);
+    expect(afterContests.contests).toHaveLength(5);
+    await expect(service.getMakerSubmission(created.submission.id)).rejects.toThrow(/제출 후보/);
   });
 });

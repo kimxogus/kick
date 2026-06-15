@@ -13,7 +13,7 @@ type ProductPageProps = {
 export default async function ProductPage({ params }: ProductPageProps) {
   try {
     const { slug } = await params;
-    return <ProductDetailView detail={kickService.getProductDetail(slug)} />;
+    return <ProductDetailView detail={await kickService.getProductDetail(slug)} />;
   } catch (error) {
     if (error instanceof KickServiceError && error.code === "NOT_FOUND") {
       notFound();

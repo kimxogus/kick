@@ -3,7 +3,7 @@
 ## 아키텍처 원칙
 
 - 1주 MVP를 위해 단순한 구조를 우선한다.
-- OpenAI Codex Sites 배포를 1순위로 고려하되, 로컬 fallback을 반드시 유지한다.
+- Vercel 배포와 Neon Postgres 영속화를 1순위로 고려하되, 로컬 fallback을 반드시 유지한다.
 - 무료 또는 저비용 실행/배포를 우선한다.
 - 백엔드 로직은 최소화하고 UI와 제작자용 MCP/Skill 완성도를 우선한다.
 - 문서와 ADR로 확정되지 않은 기술 선택은 구현하지 않는다.
@@ -149,42 +149,35 @@ MVP 구현 계약은 [docs/contracts/mvp-data-and-api-contract.md](docs/contract
 
 ## MVP 실행 및 배포 전략
 
-MVP 실행과 배포는 [docs/adr/0003-application-stack-selection.md](docs/adr/0003-application-stack-selection.md)에서 확정한 대로 2-track으로 관리한다.
+MVP 실행과 배포는 [docs/adr/0007-vercel-neon-postgres-persistence.md](docs/adr/0007-vercel-neon-postgres-persistence.md)에서 확정한 대로 Vercel + Neon Postgres를 기본 경로로 관리한다. 구체적인 Dashboard 설정과 CI 운영 방식은 [docs/deployment/vercel.md](docs/deployment/vercel.md)를 따른다.
 
-1. OpenAI Codex Sites 우선
-   - Sites saved version을 먼저 만들고 검토한다.
-   - 가능하면 승인된 saved version을 발표용 URL로 deploy한다.
-   - 앱 구현은 Sites가 요구하는 Cloudflare Worker-compatible ES module output을 만들 수 있는 구조를 우선 고려한다.
-   - 간단한 backend/API는 Worker-compatible 범위로 제한하고, 상시 실행 Node 서버를 전제로 설계하지 않는다.
-2. 로컬 fallback 필수
-   - Sites 접근, 권한, plugin, preview 정책, deploy 실패가 발생하면 정적 파일 로컬 실행 또는 localhost 실행으로 시연한다.
+1. Vercel 우선
+   - Next.js App Router 앱을 Vercel Git Integration으로 배포해 발표용 URL을 확보한다.
+   - Vercel 프로젝트 Root Directory는 `apps/web`, Framework Preset은 `Next.js`, Production Branch는 `main`으로 둔다.
+   - `DATABASE_URL`은 Vercel 환경 변수로 관리하고 secret 값은 커밋하지 않는다.
+   - Vercel Marketplace Neon integration 또는 수동 환경 변수 연결 중 하나를 사용할 수 있다.
+   - GitHub Actions는 production deploy를 수행하지 않고 test/lint/build와 coverage report만 담당한다.
+2. Neon Postgres 우선
+   - 제품, board, launch, contest seed와 vote, newsletter, 제작자 제출 후보를 Postgres에 저장한다.
+   - `npm run db:reset -w apps/web` 또는 `/admin` direct route로 현재 seed 상태를 복원한다.
+   - `DATABASE_URL`이 없으면 memory store로 동작해 로컬 개발과 테스트를 유지한다.
+3. 로컬 fallback 필수
+   - Vercel 또는 Neon 설정이 막히면 localhost 실행으로 시연한다.
    - fallback 실행 명령은 `README.md`의 로컬 실행 섹션에 기록한다.
-
-### Codex Sites 운영 원칙
-
-- `.openai/hosting.json`은 Sites project linkage와 D1/R2 binding 이름만 저장한다.
-- secret 값은 `.openai/hosting.json`에 저장하지 않는다.
-- hosted environment value와 secret은 Sites panel에서 관리한다.
-- local 개발에 필요한 key 이름은 `.env.example`에 기록하되 secret 값은 커밋하지 않는다.
-- 새 Sites 배포는 기본적으로 `admins_only` 또는 제한된 접근으로 검토한다.
-- 발표 공유가 필요할 때만 `workspace_all` 또는 필요한 `custom` 접근으로 전환한다.
-- deploy 전에는 source changes, build 결과, saved version, 접근 권한, secret 관리 상태를 확인한다.
-- deploy 후에는 deployment status와 production URL을 확인한다.
 
 ### Storage 선택 원칙
 
-- 초기 콘텐츠와 임시 presentation state에는 D1/R2를 요청하지 않는다.
-- 제품 데이터가 방문 사이에 유지되어야 하면 D1을 검토한다.
-- 이미지, 문서, 영상 업로드가 필요하면 R2를 검토한다.
-- 업로드 파일과 검색 가능한 metadata가 모두 필요하면 D1과 R2를 함께 검토한다.
-- MVP의 vote와 제출 후보는 메모리 상태를 사용하므로, board 화면은 static prerender가 아니라 dynamic render로 유지한다.
-- Next.js production에서는 page와 API route의 메모리 인스턴스가 항상 같은 상태라고 전제하지 않는다. 따라서 board UI는 hydration 이후 `GET /api/boards/weekly`를 한 번 다시 읽어 route handler 상태와 맞춘다.
+- 제품과 contest의 초기 콘텐츠는 repo seed를 source of truth로 두고 reset 시 DB에 반영한다.
+- 이미지 파일은 현재 `public/seed` 정적 자산을 사용하며 업로드 저장소는 도입하지 않는다.
+- 업로드 파일, 생성 이미지, 영상 저장이 필요해지면 별도 Storage ADR을 작성한다.
+- `/admin`은 사용자 화면에 링크하지 않고 direct URL로만 접근한다.
+- `/admin` reset은 MVP 편의성 때문에 보호하지 않으며, 외부 공유 시 누구나 초기화할 수 있는 리스크를 수용한다.
 
 ### MVP 앱 구조
 
 - `apps/web/src/app/`: Next.js App Router 화면과 API route
 - `apps/web/src/app/api/`: route handler 기반 MVP backend/API
-- `apps/web/src/server/`: fixture, 메모리 저장소, 제품/board/vote/newsletter/제작자 등록/contest 서비스 로직
+- `apps/web/src/server/`: seed fixture, memory/Postgres 저장소, 제품/board/vote/newsletter/제작자 등록/contest 서비스 로직
 - `apps/web/src/components/`: UI 컴포넌트
 - `apps/web/src/lib/`: local viewer ID와 제출 preview 저장 등 클라이언트 유틸리티
 - `apps/web/src/test/`: Vitest 테스트 setup
@@ -206,8 +199,10 @@ UI 구현 계약은 [docs/contracts/mvp-ui-contract.md](docs/contracts/mvp-ui-co
 
 - [x] MVP 실행/배포 전략 ADR 확정
 - [x] 앱 프레임워크 결정: Next.js App Router
-- [ ] Codex Sites plugin 접근과 workspace 권한 확인
+- [x] Codex Sites plugin 접근과 workspace 권한 확인
+- [x] Vercel + Neon Postgres 영속화 결정
 - [x] fallback localhost 실행 명령 문서화
+- [x] Vercel Git Integration과 GitHub Actions CI 역할 분리 결정
 - [x] MVP Auth 정책: local `viewer_id`
 - [x] MVP Weekly vote 정책: viewer/launch toggle
 - [x] MVP Search 구현 방식: 초기 콘텐츠 필터링

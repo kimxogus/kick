@@ -8,6 +8,7 @@ import { POST as createMakerSubmission } from "./maker/submissions/route";
 import { POST as createNewsletterSubscription } from "./newsletter-subscriptions/route";
 import { GET as getProduct } from "./products/[slug]/route";
 import { POST as toggleVote } from "./votes/route";
+import { POST as resetSeed } from "./admin/reset/route";
 
 describe("kick MVP API route handlers", () => {
   it("GET /api/boards/weekly는 검색과 태그 필터를 적용한다", async () => {
@@ -214,5 +215,31 @@ describe("kick MVP API route handlers", () => {
     expect(response.status).toBe(400);
     expect(body.error.code).toBe("VALIDATION_ERROR");
     expect(body.error.fields).toEqual(expect.arrayContaining(["productName", "tags"]));
+  });
+
+  it("POST /api/admin/reset은 저장소를 현재 초기 상태로 복원한다", async () => {
+    await toggleVote(
+      new Request("http://localhost/api/votes", {
+        method: "POST",
+        body: JSON.stringify({ launchId: "launch_cursor", viewerId: "api_reset_voter" })
+      })
+    );
+
+    const response = await resetSeed(new Request("http://localhost/api/admin/reset", { method: "POST" }));
+    const body = await response.json();
+    const boardResponse = await getWeeklyBoard(
+      new Request("http://localhost/api/boards/weekly?viewer_id=api_reset_voter")
+    );
+    const board = await boardResponse.json();
+
+    expect(response.status).toBe(200);
+    expect(body).toEqual({
+      status: "reset",
+      storage: "memory",
+      products: 10,
+      launches: 10,
+      contests: 5
+    });
+    expect(board.board.launches[0].isVotedByViewer).toBe(false);
   });
 });
