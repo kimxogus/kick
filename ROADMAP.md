@@ -2,33 +2,49 @@
 
 ## Now
 
-- [ ] 문서와 ADR 체계 정립
-- [ ] MVP(v1 콘테스트 데모) 범위 합의
-- [ ] 프론트 스택 결정
-- [ ] local data 포맷/시드 스키마 결정
+- [x] MVP 시연 범위 확정
+- [x] MVP 실행/배포 전략 결정
+- [x] Next.js MVP 앱 스택 결정
+- [ ] 탐색자/제작자 시연 시나리오 상세화
+- [ ] Codex Sites 접근과 workspace 권한 확인
+- [ ] fallback 정적 파일 또는 localhost 실행 명령 결정
+- [ ] 탐색자 화면 구조 설계
+- [ ] 제작자 MCP/Skill 데모 범위 설계
+- [ ] 실제 서비스 기반 seed 데이터 후보 수집
+- [ ] 등록 Skill이 보장할 품질 기준 정의
 
 ## Next
 
 - [ ] 앱 스캐폴딩
-- [ ] 등록 Skill 구현 (정보 수집 → 런칭 페이지·카드뉴스·카피 생성 → local data)
-- [ ] 제품 목록/상세/검색 구현
-- [ ] Weeklyboard + 좋아요 + 주간 랭킹 구현
-- [ ] 댓글 구현
-- [ ] 시드 제품 데이터 준비 (기존 제품을 킥 런칭처럼 연결)
-- [ ] 라이브 데모 + 녹화 백업 준비
+- [ ] 백엔드 API 계약 테스트 작성
+- [ ] Weekly board 구현
+- [ ] Product 소개 페이지 구현
+- [ ] Vote 구현
+- [ ] Search 구현
+- [ ] Newsletter UI 구현
+- [ ] 제작자 등록/런칭 보조 흐름 구현
+- [ ] 시드 제품 데이터 준비
+- [ ] 라이브 데모와 녹화 백업 준비
+- [ ] Sites saved version 검토
+- [ ] 가능할 경우 발표용 Sites 배포 URL 확보
 
 ## Later
 
-- [ ] 서버 API + MCP 등록 경로 (Skill→MCP)
-- [ ] Kick Newsletter (제작자 피드백 / 유저 큐레이션)
-- [ ] 창작자 1:1 메시지
-- [ ] AI 큐레이션 필터링 고도화
-- [ ] Kick Contest 결제/상금 송금 연동
+- [ ] 로컬 Skill 분석/등록 로직의 backend mirror
+- [ ] Daily, Monthly, Yearly board
+- [ ] Ranking 고도화
+- [ ] kick contest
+- [ ] 행사 전용 kick contest
+- [ ] 댓글과 창작자 1:1 메시지
+- [ ] 운영자 큐레이션 백엔드
+- [ ] AI Slop 필터링
+- [ ] 실제 newsletter 발송
+- [ ] 응원 결제 또는 후원
 - [ ] 외부 공개용 MCP 서버와 ChatGPT/Claude 연동 확장
 
 ## Milestone 템플릿
 
-### M0: 문서/결정 준비
+### M0: 설계/결정 준비
 
 - 목표:
 - 성공 기준:
