@@ -10,6 +10,7 @@
   --accent-strong: #0b4f49;
   --warm: #ff8a4c;
   --soft-kick: #fff0e9;
+  --shadow-soft: 0 0.5rem 1rem rgba(21, 21, 21, 0.08);
 }
 
 * {
@@ -51,9 +52,12 @@ textarea {
 }
 
 .page-hero {
-  background: linear-gradient(135deg, #fff5ef 0%, #ffe0d2 100%);
-  border: 1px solid #ffd3c2;
+  background:
+    radial-gradient(circle at 10% 12%, rgba(255, 255, 255, 0.9) 0, rgba(255, 255, 255, 0) 24%),
+    linear-gradient(135deg, #fff7f0 0%, #ffe0cf 56%, #ffd2bc 100%);
+  border: 1px solid #ffc8b3;
   border-radius: 8px;
+  box-shadow: 0 0.75rem 2rem rgba(255, 92, 57, 0.14);
   padding: 36px;
 }
 
@@ -225,7 +229,7 @@ textarea {
 .meta-row span {
   background: #fff7f2;
   border: 1px solid #ffd8c9;
-  border-radius: 8px;
+  border-radius: 999px;
   color: var(--kick-dark);
   padding: 7px 10px;
 }
@@ -300,6 +304,14 @@ textarea {
   gap: 16px;
   grid-template-columns: 52px 76px minmax(0, 1fr) 76px;
   padding: 14px;
+  transition:
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.launch-card:hover {
+  box-shadow: var(--shadow-soft);
+  transform: translateY(-4px);
 }
 
 .rank {
@@ -317,7 +329,7 @@ textarea {
 
 .product-thumb,
 .product-visual,
-.related-card img {
+.related-thumb {
   background: #eff2f1;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -328,6 +340,16 @@ textarea {
 .product-thumb {
   height: 76px;
   width: 76px;
+}
+
+.product-emoji-visual {
+  align-items: center;
+  background: linear-gradient(135deg, #fff7ef 0%, #ffe1d2 100%);
+  color: var(--ink);
+  display: inline-flex;
+  font-size: 40px;
+  justify-content: center;
+  line-height: 1;
 }
 
 .product-title {
@@ -360,14 +382,24 @@ textarea {
 .vote-button {
   align-items: center;
   background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  border: 1px solid #ffb49e;
+  border-radius: 999px;
+  color: var(--kick-dark);
   cursor: pointer;
   display: grid;
   gap: 2px;
   justify-items: center;
   min-height: 64px;
   padding: 8px;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.vote-button:hover {
+  background: var(--soft-kick);
+  border-color: var(--kick);
 }
 
 .vote-button.active {
@@ -406,6 +438,10 @@ textarea {
 .product-visual {
   height: 220px;
   width: 220px;
+}
+
+.product-visual.product-emoji-visual {
+  font-size: 88px;
 }
 
 .kick-point {
@@ -511,7 +547,7 @@ textarea {
   padding: 12px;
 }
 
-.related-card img {
+.related-thumb {
   height: 88px;
   width: 100%;
 }
@@ -596,11 +632,16 @@ textarea {
   padding: 8px 10px;
 }
 
-.mini-product-link img {
+.mini-product-thumb {
   background: #eff2f1;
   border-radius: 6px;
   height: 28px;
+  object-fit: cover;
   width: 28px;
+}
+
+.mini-product-thumb.product-emoji-visual {
+  font-size: 17px;
 }
 
 .maker-form label:nth-child(3) {

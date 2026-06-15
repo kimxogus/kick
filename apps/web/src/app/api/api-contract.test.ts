@@ -21,6 +21,15 @@ describe("kick MVP API route handlers", () => {
     expect(body.board.launches[0].product.slug).toBe("cursor");
   });
 
+  it("GET /api/boards/weekly는 샘플 HTML 제품을 병합해 반환한다", async () => {
+    const response = await getWeeklyBoard(new Request("http://localhost/api/boards/weekly"));
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.board.launches.length).toBeGreaterThanOrEqual(10);
+    expect(body.board.launches.map((launch: { product: { slug: string } }) => launch.product.slug)).toContain("momento");
+  });
+
   it("GET /api/products/:slug는 제품 상세를 반환한다", async () => {
     const response = await getProduct(new Request("http://localhost/api/products/cursor"), {
       params: Promise.resolve({ slug: "cursor" })

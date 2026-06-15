@@ -1,4 +1,5 @@
 import type { ContestListResponse } from "@/server/kick-service";
+import { ProductMedia } from "./product-media";
 
 type ContestViewProps = {
   initialResponse: ContestListResponse;
@@ -47,7 +48,7 @@ export function ContestView({ initialResponse }: ContestViewProps) {
             <div className="featured-products" aria-label={`${contest.title} 대표 제품`}>
               {contest.featuredLaunches.map((launch) => (
                 <a className="mini-product-link" href={`/products/${launch.product.slug}`} key={launch.id}>
-                  <img alt="" src={launch.product.thumbnailUrl} />
+                  <ProductMedia className="mini-product-thumb" product={launch.product} />
                   <span>{launch.product.name}</span>
                 </a>
               ))}

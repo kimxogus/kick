@@ -16,9 +16,13 @@ describe("kick MVP backend service", () => {
     const response = service.getWeeklyBoard({});
 
     expect(response.board.period).toBe("weekly");
-    expect(response.board.launches.length).toBeGreaterThanOrEqual(4);
-    expect(response.board.launches.map((launch) => launch.rank)).toEqual([1, 2, 3, 4]);
+    expect(response.board.launches.length).toBeGreaterThanOrEqual(10);
+    expect(response.board.launches.map((launch) => launch.rank)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     expect(response.filters.availableTags).toContain("AI");
+    expect(response.filters.availableTags).toContain("다이어리");
+    expect(response.board.launches.map((launch) => launch.product.slug)).toContain("momento");
+    expect(response.board.launches.map((launch) => launch.product.slug)).toContain("pixelmong");
+    expect(response.board.launches.find((launch) => launch.product.slug === "momento")?.product.emoji).toBe("📓");
   });
 
   it("검색어와 태그로 Weekly board launch를 필터링한다", () => {
@@ -31,6 +35,14 @@ describe("kick MVP backend service", () => {
     expect(response.board.launches[0]?.product.slug).toBe("cursor");
     expect(response.filters.q).toBe("developer");
     expect(response.filters.tag).toBe("Productivity");
+  });
+
+  it("샘플 HTML에서 되살린 제품을 category와 태그로 검색한다", () => {
+    const categoryResponse = service.getWeeklyBoard({ q: "여행" });
+    const tagResponse = service.getWeeklyBoard({ tag: "반려동물" });
+
+    expect(categoryResponse.board.launches.map((launch) => launch.product.slug)).toContain("menuddak");
+    expect(tagResponse.board.launches.map((launch) => launch.product.slug)).toEqual(["pixelmong"]);
   });
 
   it("제품 slug로 상세와 관련 launch를 반환한다", () => {
@@ -48,8 +60,9 @@ describe("kick MVP backend service", () => {
   it("공개 contest 목록을 읽기 전용 모델로 반환한다", () => {
     const response = service.getContests();
 
-    expect(response.contests.length).toBeGreaterThanOrEqual(2);
+    expect(response.contests.length).toBeGreaterThanOrEqual(5);
     expect(response.contests[0]?.title).toContain("AI");
+    expect(response.contests.map((contest) => contest.slug)).toContain("summer-vibe-coding-challenge-2026");
     expect(response.contests[0]?.featuredLaunches.length).toBeGreaterThan(0);
     expect(response.contests[0]?.featuredLaunches[0]?.product.slug).toBeTruthy();
   });

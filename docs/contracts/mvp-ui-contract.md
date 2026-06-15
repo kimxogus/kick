@@ -17,11 +17,12 @@ Next.js App Router 기준 화면:
 - 첫 화면은 마케팅 랜딩이 아니라 Weekly board 제품 탐색 경험이다. 단, 제작자 런칭 보조의 가치를 짧게 보여주는 hero와 3단계 설명은 포함할 수 있다.
 - 화면은 사내 시연자가 바로 클릭하며 흐름을 보여줄 수 있어야 한다.
 - 실제 서비스 기반 초기 콘텐츠를 사용해 빈 화면을 만들지 않는다.
+- 현재 실제 서비스 제품과 기존 샘플 HTML 제품을 함께 보여줘 MVP 화면의 콘텐츠 밀도를 확보한다.
 - 사용자 화면에는 `seed`, `더미`, `데모 미연결`, `표시용`, 관리자/운영자 CTA 같은 내부 구현 문구를 노출하지 않는다.
 - CTA는 vote, 제품 상세 보기, newsletter 구독, 제작자 등록 보조 시작에 집중한다.
 - 관리자 기능 진입은 향후 `/admin` route에서만 제공한다. 이번 MVP PR에는 `/admin` route와 관리자 버튼을 만들지 않는다.
 - 운영자 큐레이션 화면과 결제/후원 UI는 MVP에서 제외한다.
-- 정적 HTML 참고안의 warm orange 컬러, 제품 카드, 랭킹, 카드뉴스 시각 패턴을 Bootstrap dependency 없이 Next.js/CSS로 이식한다.
+- 정적 HTML 참고안의 warm orange 컬러, 제품 카드 hover, emoji thumbnail, pill형 vote 버튼, 랭킹 badge, 카드뉴스 시각 패턴을 Bootstrap dependency 없이 Next.js/CSS로 이식한다.
 
 ## 탐색자 플로우
 
@@ -42,7 +43,7 @@ Next.js App Router 기준 화면:
 - 검색 input
 - 태그 필터
 - rank가 있는 제품 카드 목록
-- 제품명, 한 줄 소개, 썸네일, 태그, maker, vote 수, comment 수
+- 제품명, 한 줄 소개, category, emoji 또는 썸네일, 태그, maker, vote 수, comment 수
 - vote 버튼
 - 제품 상세 링크
 - contest 목록으로 이동하는 사용자용 링크

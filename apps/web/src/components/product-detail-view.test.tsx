@@ -23,6 +23,18 @@ describe("ProductDetailView", () => {
     expect(screen.getByText("Perplexity")).toBeTruthy();
   });
 
+  it("emoji 기반 샘플 제품 상세를 샘플 HTML 톤으로 보여준다", () => {
+    const detail = createKickService().getProductDetail("momento");
+
+    render(<ProductDetailView detail={detail} />);
+
+    expect(screen.getByRole("heading", { name: "모먼토" })).toBeTruthy();
+    expect(screen.getByText("📓")).toBeTruthy();
+    expect(screen.getAllByText("생산성").length).toBeGreaterThan(0);
+    expect(screen.getByText("쓰지 않아도 쌓이는 일기 — 기록의 진입장벽을 없앤다.")).toBeTruthy();
+    expect(screen.getByText("하루의 기록, 자동으로 완성")).toBeTruthy();
+  });
+
   it("제품 상세에서 newsletter 구독 상태를 보여준다", async () => {
     const detail = createKickService().getProductDetail("cursor");
 

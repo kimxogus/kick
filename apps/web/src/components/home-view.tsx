@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 
 import { getOrCreateViewerId } from "@/lib/viewer";
 import type { Launch, VoteResponse, WeeklyBoardResponse } from "@/server/kick-service";
+import { ProductMedia } from "./product-media";
 
 type HomeViewProps = {
   initialResponse: WeeklyBoardResponse;
@@ -160,7 +161,7 @@ export function HomeView({ initialResponse, onVote = defaultVote }: HomeViewProp
           visibleLaunches.map((launch) => (
             <article className="launch-card" key={launch.id}>
               <div className="rank">#{launch.rank}</div>
-              <img alt="" className="product-thumb" src={launch.product.thumbnailUrl} />
+              <ProductMedia className="product-thumb" product={launch.product} />
               <div className="launch-main">
                 <a className="product-title" href={`/products/${launch.product.slug}`}>
                   {launch.product.name}
@@ -171,6 +172,7 @@ export function HomeView({ initialResponse, onVote = defaultVote }: HomeViewProp
                   <span>{launch.commentCount} comments</span>
                 </div>
                 <div className="meta-row">
+                  <span className="category-pill">{launch.product.category}</span>
                   {launch.product.tags.slice(0, 3).map((tag) => (
                     <span key={tag}>{tag}</span>
                   ))}
@@ -227,6 +229,7 @@ function filterLaunches(launches: Launch[], query: string, tag: string | null): 
     const searchable = [
       product.name,
       product.tagline,
+      product.category,
       product.description,
       ...product.tags,
       ...product.targetUsers

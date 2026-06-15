@@ -10,6 +10,8 @@ export type Product = {
   slug: string;
   name: string;
   tagline: string;
+  category: string;
+  emoji?: string;
   description: string;
   websiteUrl: string;
   demoUrl?: string;
@@ -243,6 +245,42 @@ const baseMakers: Record<string, Maker> = {
     name: "Lovable",
     role: "AI app builder team",
     profileUrl: "https://lovable.dev"
+  },
+  momento: {
+    id: "maker_momento",
+    name: "Momento Labs",
+    role: "AI diary team",
+    profileUrl: "https://example.com/momento"
+  },
+  pixelmong: {
+    id: "maker_pixelmong",
+    name: "Pixelmong Studio",
+    role: "pet character team",
+    profileUrl: "https://example.com/pixelmong"
+  },
+  reportmate: {
+    id: "maker_reportmate",
+    name: "ReportMate",
+    role: "workflow automation team",
+    profileUrl: "https://example.com/reportmate"
+  },
+  menuddak: {
+    id: "maker_menuddak",
+    name: "MenuDdak",
+    role: "travel translation team",
+    profileUrl: "https://example.com/menuddak"
+  },
+  studysync: {
+    id: "maker_studysync",
+    name: "StudySync",
+    role: "study collaboration team",
+    profileUrl: "https://example.com/studysync"
+  },
+  catchletter: {
+    id: "maker_catchletter",
+    name: "Catchletter",
+    role: "creator marketing team",
+    profileUrl: "https://example.com/catchletter"
   }
 };
 
@@ -255,6 +293,7 @@ const seedLaunches: StoredLaunch[] = [
       slug: "cursor",
       name: "Cursor",
       tagline: "AI와 함께 코드를 읽고 고치는 개발자용 에디터",
+      category: "개발 도구",
       description:
         "Cursor는 개발자가 코드베이스를 이해하고 변경사항을 빠르게 적용하도록 돕는 AI 코드 에디터입니다.",
       websiteUrl: "https://cursor.com",
@@ -298,6 +337,7 @@ const seedLaunches: StoredLaunch[] = [
       slug: "perplexity",
       name: "Perplexity",
       tagline: "출처와 함께 답을 찾는 AI 검색 엔진",
+      category: "리서치",
       description:
         "Perplexity는 웹 검색과 AI 답변을 결합해 사용자가 빠르게 근거 있는 정보를 탐색하도록 돕습니다.",
       websiteUrl: "https://www.perplexity.ai",
@@ -339,6 +379,7 @@ const seedLaunches: StoredLaunch[] = [
       slug: "granola",
       name: "Granola",
       tagline: "회의 내용을 자동으로 정리하는 AI 노트",
+      category: "생산성",
       description:
         "Granola는 회의 맥락을 기록하고 요약해 팀이 후속 액션을 놓치지 않도록 돕습니다.",
       websiteUrl: "https://www.granola.ai",
@@ -380,6 +421,7 @@ const seedLaunches: StoredLaunch[] = [
       slug: "lovable",
       name: "Lovable",
       tagline: "프롬프트로 앱을 빠르게 만드는 AI 빌더",
+      category: "노코드",
       description:
         "Lovable은 아이디어를 입력하면 웹 앱 초안을 빠르게 만들고 반복 개선할 수 있게 돕습니다.",
       websiteUrl: "https://lovable.dev",
@@ -412,6 +454,240 @@ const seedLaunches: StoredLaunch[] = [
     commentCount: 17,
     featuredReason: "AI 시대의 빠른 제품 제작 흐름을 보여주는 제품",
     launchedAt: "2026-06-13T09:00:00.000Z"
+  },
+  {
+    id: "launch_momento",
+    rank: 5,
+    product: {
+      id: "product_momento",
+      slug: "momento",
+      name: "모먼토",
+      tagline: "오늘 하루를 한 장으로 남기는 AI 다이어리",
+      category: "생산성",
+      emoji: "📓",
+      description:
+        "모먼토는 하루 동안의 메모, 사진, 일정을 모아 잠들기 전 자동으로 한 장의 일기로 정리해주는 AI 다이어리입니다. 글쓰기에 부담을 느끼는 사람도 매일 기록을 남길 수 있습니다.",
+      websiteUrl: "https://example.com/momento",
+      thumbnailUrl: "/seed/momento.svg",
+      gallery: ["/seed/momento.svg"],
+      makers: [baseMakers.momento],
+      tags: ["AI", "다이어리", "생산성", "기록"],
+      targetUsers: ["바쁜 직장인", "콘텐츠 크리에이터"],
+      useCases: ["하루 기록 자동 정리", "사진과 일정 기반 회고", "콘텐츠 소재 아카이브"],
+      kickPoint: "쓰지 않아도 쌓이는 일기 — 기록의 진입장벽을 없앤다.",
+      cardNewsCopy: ["하루의 기록, 자동으로 완성", "쓰지 않아도 쌓이는 일기", "내일도 기록될 오늘"],
+      targetMessages: [
+        {
+          audience: "바쁜 직장인",
+          message: "퇴근길 3분, 오늘 하루가 자동으로 정리됩니다."
+        },
+        {
+          audience: "콘텐츠 크리에이터",
+          message: "매일의 기록이 곧 콘텐츠 소재가 됩니다."
+        }
+      ],
+      status: "published",
+      createdAt: "2026-06-09T00:00:00.000Z"
+    },
+    voteCount: 128,
+    commentCount: 2,
+    featuredReason: "기록을 시작하기 어려운 사람에게 자동화된 첫 장을 만들어주는 제품",
+    launchedAt: "2026-06-09T09:00:00.000Z"
+  },
+  {
+    id: "launch_pixelmong",
+    rank: 6,
+    product: {
+      id: "product_pixelmong",
+      slug: "pixelmong",
+      name: "픽셀멍",
+      tagline: "사진 한 장으로 만드는 우리 강아지 캐릭터",
+      category: "엔터테인먼트",
+      emoji: "🐶",
+      description:
+        "반려동물 사진을 업로드하면 다양한 스타일의 픽셀아트 캐릭터와 스티커 세트를 생성해주는 서비스입니다. 생성된 캐릭터는 프로필, 이모티콘, 굿즈 제작에 활용할 수 있습니다.",
+      websiteUrl: "https://example.com/pixelmong",
+      thumbnailUrl: "/seed/pixelmong.svg",
+      gallery: ["/seed/pixelmong.svg"],
+      makers: [baseMakers.pixelmong],
+      tags: ["AI", "이미지생성", "반려동물", "굿즈"],
+      targetUsers: ["반려동물 보호자", "굿즈 제작자"],
+      useCases: ["반려동물 캐릭터 생성", "프로필 이미지 제작", "굿즈 시안 제작"],
+      kickPoint: "내 강아지를 세상에 하나뿐인 캐릭터로 — 즉시 굿즈화 가능.",
+      cardNewsCopy: ["내 강아지, 캐릭터가 되다", "30초 픽셀아트 변환", "굿즈로 만드는 우리 댕댕이"],
+      targetMessages: [
+        {
+          audience: "반려동물 보호자",
+          message: "우리 댕댕이가 캐릭터가 되는 마법, 30초 완성."
+        },
+        {
+          audience: "굿즈 제작자",
+          message: "고화질 캐릭터 시트로 바로 인쇄 발주까지."
+        }
+      ],
+      status: "published",
+      createdAt: "2026-06-09T00:00:00.000Z"
+    },
+    voteCount: 96,
+    commentCount: 1,
+    featuredReason: "사진 한 장에서 공유하고 싶은 캐릭터 자산으로 이어지는 흐름이 명확한 제품",
+    launchedAt: "2026-06-09T10:00:00.000Z"
+  },
+  {
+    id: "launch_reportmate",
+    rank: 7,
+    product: {
+      id: "product_reportmate",
+      slug: "reportmate",
+      name: "리포트메이트",
+      tagline: "회의 녹음을 바로 보고서로 바꿔주는 도구",
+      category: "업무 자동화",
+      emoji: "🗂️",
+      description:
+        "회의 녹음 파일을 업로드하면 핵심 논의 내용, 결정 사항, 액션 아이템을 정리한 보고서를 자동으로 생성합니다. 팀 협업 도구와 연동해 바로 공유할 수 있습니다.",
+      websiteUrl: "https://example.com/reportmate",
+      thumbnailUrl: "/seed/reportmate.svg",
+      gallery: ["/seed/reportmate.svg"],
+      makers: [baseMakers.reportmate],
+      tags: ["AI", "회의록", "업무자동화", "협업"],
+      targetUsers: ["PM/팀 리더", "스타트업 운영팀"],
+      useCases: ["회의 녹음 요약", "액션 아이템 정리", "보고서 공유"],
+      kickPoint: "회의 끝나면 보고서도 끝 — 회의록 작성 시간을 0으로.",
+      cardNewsCopy: ["회의 끝, 보고서 시작", "녹음 파일 → 정리된 보고서", "액션 아이템까지 자동 정리"],
+      targetMessages: [
+        {
+          audience: "PM/팀 리더",
+          message: "회의 끝나자마자 액션 아이템이 정리되어 도착합니다."
+        },
+        {
+          audience: "스타트업 운영팀",
+          message: "회의록 작성에 쓰던 시간을 본업에 쓰세요."
+        }
+      ],
+      status: "published",
+      createdAt: "2026-06-08T00:00:00.000Z"
+    },
+    voteCount: 74,
+    commentCount: 2,
+    featuredReason: "회의 후 반복 정리 시간을 줄이는 실무형 자동화 제품",
+    launchedAt: "2026-06-08T09:00:00.000Z"
+  },
+  {
+    id: "launch_menuddak",
+    rank: 8,
+    product: {
+      id: "product_menuddak",
+      slug: "menuddak",
+      name: "메뉴딱",
+      tagline: "사진 한 장으로 끝내는 외국어 메뉴판 번역",
+      category: "여행",
+      emoji: "🍜",
+      description:
+        "해외 식당 메뉴판을 카메라로 찍으면 음식 설명, 알레르기 정보, 추천 메뉴까지 즉시 번역해주는 여행자용 앱입니다.",
+      websiteUrl: "https://example.com/menuddak",
+      thumbnailUrl: "/seed/menuddak.svg",
+      gallery: ["/seed/menuddak.svg"],
+      makers: [baseMakers.menuddak],
+      tags: ["AI", "번역", "여행", "OCR"],
+      targetUsers: ["해외 여행자", "음식 알레르기가 있는 사용자"],
+      useCases: ["메뉴판 OCR 번역", "알레르기 성분 확인", "현지 추천 메뉴 이해"],
+      kickPoint: "말 안 통하는 식당에서도 자신있게 주문 — 여행자의 메뉴판 불안을 없앤다.",
+      cardNewsCopy: ["메뉴판 사진 한 장이면 끝", "현지어 몰라도 든든한 한 끼", "여행지에서도 자신있게 주문"],
+      targetMessages: [
+        {
+          audience: "해외 여행자",
+          message: "현지어 몰라도 메뉴판 걱정 끝."
+        },
+        {
+          audience: "음식 알레르기가 있는 사용자",
+          message: "알레르기 성분까지 한 번에 확인하세요."
+        }
+      ],
+      status: "published",
+      createdAt: "2026-06-08T00:00:00.000Z"
+    },
+    voteCount: 61,
+    commentCount: 0,
+    featuredReason: "여행 중 바로 겪는 메뉴판 불안을 짧은 사용 흐름으로 해결하는 제품",
+    launchedAt: "2026-06-08T10:00:00.000Z"
+  },
+  {
+    id: "launch_studysync",
+    rank: 9,
+    product: {
+      id: "product_studysync",
+      slug: "studysync",
+      name: "스터디싱크",
+      tagline: "함께 공부하는 친구들과 진행률을 맞추는 앱",
+      category: "교육",
+      emoji: "📚",
+      description:
+        "스터디 그룹원들의 학습 진행률, 목표, 타이머를 공유해 서로의 동기부여를 돕는 앱입니다. 주간 리포트로 그룹 전체의 학습 현황을 확인할 수 있습니다.",
+      websiteUrl: "https://example.com/studysync",
+      thumbnailUrl: "/seed/studysync.svg",
+      gallery: ["/seed/studysync.svg"],
+      makers: [baseMakers.studysync],
+      tags: ["교육", "스터디", "협업", "동기부여"],
+      targetUsers: ["취업 준비생 스터디 그룹", "온라인 강의 수강생"],
+      useCases: ["그룹 진행률 공유", "학습 목표 관리", "주간 리포트 확인"],
+      kickPoint: "혼자 하면 멈추는 공부, 함께면 계속된다.",
+      cardNewsCopy: ["함께라서 계속되는 공부", "그룹 진행률 한눈에", "오늘의 스터디, 인증 완료"],
+      targetMessages: [
+        {
+          audience: "취업 준비생 스터디 그룹",
+          message: "오늘 우리 그룹의 진행률, 한눈에 확인하세요."
+        },
+        {
+          audience: "온라인 강의 수강생",
+          message: "강의 진도, 친구들과 함께 맞춰가요."
+        }
+      ],
+      status: "published",
+      createdAt: "2026-06-07T00:00:00.000Z"
+    },
+    voteCount: 45,
+    commentCount: 1,
+    featuredReason: "그룹의 진행률을 보이게 만들어 학습 지속성을 높이는 제품",
+    launchedAt: "2026-06-07T09:00:00.000Z"
+  },
+  {
+    id: "launch_catchletter",
+    rank: 10,
+    product: {
+      id: "product_catchletter",
+      slug: "catchletter",
+      name: "캐치레터",
+      tagline: "내 SNS 글을 분석해 뉴스레터로 묶어주는 서비스",
+      category: "마케팅",
+      emoji: "✉️",
+      description:
+        "최근 작성한 SNS 게시물과 블로그 글을 분석해 주간 뉴스레터 초안을 자동으로 작성해주는 서비스입니다. 크리에이터와 1인 창업자의 콘텐츠 재활용을 돕습니다.",
+      websiteUrl: "https://example.com/catchletter",
+      thumbnailUrl: "/seed/catchletter.svg",
+      gallery: ["/seed/catchletter.svg"],
+      makers: [baseMakers.catchletter],
+      tags: ["마케팅", "뉴스레터", "콘텐츠", "자동화"],
+      targetUsers: ["1인 창업자", "뉴스레터 운영자"],
+      useCases: ["SNS 글 재활용", "주간 뉴스레터 초안 생성", "콘텐츠 발행 루틴 유지"],
+      kickPoint: "이미 쓴 글이 뉴스레터가 된다 — 콘텐츠 재활용의 자동화.",
+      cardNewsCopy: ["쓴 글이 다시 콘텐츠가 된다", "주간 뉴스레터, 초안 자동완성", "꾸준한 발행의 비밀"],
+      targetMessages: [
+        {
+          audience: "1인 창업자",
+          message: "이번 주에 올린 글, 뉴스레터로 다시 활용하세요."
+        },
+        {
+          audience: "뉴스레터 운영자",
+          message: "발행 부담을 줄이고 꾸준함을 유지하세요."
+        }
+      ],
+      status: "published",
+      createdAt: "2026-06-07T00:00:00.000Z"
+    },
+    voteCount: 39,
+    commentCount: 1,
+    featuredReason: "이미 만든 콘텐츠를 정리해 다시 발행할 수 있게 돕는 제품",
+    launchedAt: "2026-06-07T10:00:00.000Z"
   }
 ];
 
@@ -447,6 +723,42 @@ const contestFixtures: StoredContest[] = [
     endsOn: "2026-06-28",
     productCount: 8,
     featuredLaunchIds: ["launch_perplexity", "launch_lovable"]
+  },
+  {
+    id: "contest_summer_vibe_coding",
+    slug: "summer-vibe-coding-challenge-2026",
+    title: "2026 여름 바이브 코딩 챌린지",
+    host: "kick community",
+    description: "여름 시즌에 바로 써보고 싶은 AI 제품과 생산성 도구를 모아보는 공개 챌린지입니다.",
+    status: "open",
+    startsOn: "2026-06-09",
+    endsOn: "2026-06-30",
+    productCount: 12,
+    featuredLaunchIds: ["launch_momento", "launch_pixelmong"]
+  },
+  {
+    id: "contest_internal_ai_tools",
+    slug: "internal-ai-tools-hackathon",
+    title: "사내 해커톤: AI 업무도구",
+    host: "OO팀 해커톤",
+    description: "팀의 반복 업무를 줄이고 협업 흐름을 개선하는 사내 해커톤 출품작을 모아봅니다.",
+    status: "open",
+    startsOn: "2026-06-10",
+    endsOn: "2026-06-20",
+    productCount: 5,
+    featuredLaunchIds: ["launch_reportmate", "launch_granola"]
+  },
+  {
+    id: "contest_first_launch",
+    slug: "kick-launch-contest-1",
+    title: "1차 kick 런칭 콘테스트",
+    host: "kick launch club",
+    description: "초기 메이커가 제품의 첫 메시지를 다듬고 탐색자 반응을 확인하는 런칭 콘테스트입니다.",
+    status: "closed",
+    startsOn: "2026-05-18",
+    endsOn: "2026-05-31",
+    productCount: 8,
+    featuredLaunchIds: ["launch_studysync", "launch_catchletter"]
   }
 ];
 
@@ -693,6 +1005,7 @@ function matchesSearch(product: Product, q: string): boolean {
   const haystack = [
     product.name,
     product.tagline,
+    product.category,
     product.description,
     ...product.tags,
     ...product.targetUsers

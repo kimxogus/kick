@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 
 import { getOrCreateViewerId } from "@/lib/viewer";
 import type { NewsletterResponse, ProductDetailResponse, VoteResponse } from "@/server/kick-service";
+import { ProductMedia } from "./product-media";
 
 type ProductDetailViewProps = {
   detail: ProductDetailResponse;
@@ -66,9 +67,10 @@ export function ProductDetailView({
         Weekly board
       </a>
       <section className="product-hero">
-        <img alt="" className="product-visual" src={detail.product.thumbnailUrl} />
+        <ProductMedia className="product-visual" product={detail.product} />
         <div>
           <p className="eyebrow">{detail.product.tags.slice(0, 2).join(" / ")}</p>
+          <span className="category-pill">{detail.product.category}</span>
           <h1>{detail.product.name}</h1>
           <p className="hero-copy">{detail.product.tagline}</p>
           <button
@@ -148,7 +150,7 @@ export function ProductDetailView({
         <div className="related-grid">
           {detail.relatedLaunches.map((related) => (
             <a className="related-card" href={`/products/${related.product.slug}`} key={related.id}>
-              <img alt="" src={related.product.thumbnailUrl} />
+              <ProductMedia className="related-thumb" product={related.product} />
               <strong>{related.product.name}</strong>
               <span>{related.product.tagline}</span>
             </a>

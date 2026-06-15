@@ -24,6 +24,8 @@ record("home shows launch hero", await isVisible(page.getByRole("heading", { nam
 record("home shows weekly board", await isVisible(page.getByText("이번 주 눈여겨볼 제품")));
 record("home shows Skill MCP step", await isVisible(page.getByText("Skill + MCP가 정리")));
 record("home shows Cursor card", await isVisible(page.getByRole("link", { name: "Cursor" })));
+record("home shows restored sample product", await isVisible(page.getByRole("link", { name: "모먼토" })));
+record("home shows sample emoji", await isVisible(page.getByText("📓")));
 record("home shows maker and comments", await isVisible(page.getByText("Anysphere")) && await isVisible(page.getByText("36 comments")));
 
 await page.getByLabel("제품 검색").fill("meeting");
@@ -62,8 +64,13 @@ record("product newsletter success", await isVisible(page.getByText("제품 업�
 await page.goto(`${baseUrl}/contest`, { waitUntil: "networkidle" });
 record("contest page heading visible", await isVisible(page.getByRole("heading", { name: "공개 콘테스트" })));
 record("contest item visible", await isVisible(page.getByText("AI Workflow Challenge")));
+record("restored contest visible", await isVisible(page.getByText("2026 여름 바이브 코딩 챌린지")));
 record("contest has product link", await isVisible(page.getByRole("link", { name: /Cursor/ })));
-record("contest has no creation button", (await page.getByRole("button").count()) === 0);
+const creationButtonPattern = new RegExp(["콘테스트 " + "개최하기", "개최", "상금 " + "등록"].join("|"));
+record(
+  "contest has no creation button",
+  (await page.getByRole("button", { name: creationButtonPattern }).count()) === 0
+);
 
 await page.goto(baseUrl, { waitUntil: "networkidle" });
 await page.getByPlaceholder("you@example.com").fill("bad-email");

@@ -15,6 +15,9 @@ describe("HomeView", () => {
     expect(screen.getByRole("link", { name: "공개 콘테스트 보기" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Cursor" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Granola" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "모먼토" })).toBeTruthy();
+    expect(screen.getByText("📓")).toBeTruthy();
+    expect(screen.getAllByText("생산성").length).toBeGreaterThan(0);
     expect(screen.getByText("Anysphere")).toBeTruthy();
     expect(screen.getByText("36 comments")).toBeTruthy();
     const blockedWords = [
@@ -36,6 +39,20 @@ describe("HomeView", () => {
     });
 
     expect(screen.getByRole("link", { name: "Granola" })).toBeTruthy();
+    expect(screen.queryByRole("link", { name: "Cursor" })).toBeNull();
+  });
+
+  it("샘플 제품 category 검색과 emoji thumbnail을 보여준다", () => {
+    const initialResponse = createKickService().getWeeklyBoard({});
+
+    render(<HomeView initialResponse={initialResponse} />);
+
+    fireEvent.change(screen.getByLabelText("제품 검색"), {
+      target: { value: "여행" }
+    });
+
+    expect(screen.getByRole("link", { name: "메뉴딱" })).toBeTruthy();
+    expect(screen.getByText("🍜")).toBeTruthy();
     expect(screen.queryByRole("link", { name: "Cursor" })).toBeNull();
   });
 

@@ -53,6 +53,8 @@ type Product = {
   slug: string;
   name: string;
   tagline: string;
+  category: string;
+  emoji?: string;
   description: string;
   websiteUrl: string;
   demoUrl?: string;
@@ -395,10 +397,12 @@ type MakerSubmissionDetailResponse = {
 ## API 테스트 기준
 
 - Weekly board는 launch를 rank 순서로 반환해야 한다.
+- Weekly board는 현재 실제 서비스 기반 제품과 기존 샘플 HTML 제품을 병합해 최소 10개 launch를 반환해야 한다.
 - 검색어는 제품명, 한 줄 소개, 설명, 태그, 대상 사용자에 매칭되어야 한다.
+- 검색어는 제품 category에도 매칭되어야 한다.
 - 태그 필터는 해당 태그가 있는 launch만 반환해야 한다.
 - 제품 상세는 Kick Point, 카드뉴스 문구, 타겟별 메시지를 포함해야 한다.
-- contest 목록은 읽기 전용 데이터와 대표 launch를 반환해야 한다.
+- contest 목록은 현재 contest와 기존 샘플 HTML contest를 병합한 읽기 전용 데이터와 대표 launch를 반환해야 한다.
 - vote는 같은 viewer/launch 조합에서 toggle 되어야 한다.
 - newsletter는 잘못된 이메일을 거부해야 한다.
 - launch assist는 필수 입력 누락 시 follow-up question을 반환해야 한다.

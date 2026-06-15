@@ -10,6 +10,7 @@ describe("ContestView", () => {
 
     expect(screen.getByRole("heading", { name: "공개 콘테스트" })).toBeTruthy();
     expect(screen.getByText("AI Workflow Challenge")).toBeTruthy();
+    expect(screen.getByText("2026 여름 바이브 코딩 챌린지")).toBeTruthy();
     expect(screen.getByRole("link", { name: "Weekly board" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "제작자 런칭 보조" })).toBeTruthy();
     expect(screen.queryByRole("button")).toBeNull();
