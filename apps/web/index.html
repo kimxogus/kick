@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>킥(Kick) — agent로 런칭하는 제품 플랫폼</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+  <div id="nav" data-active="home"></div>
+
+  <main class="container py-5">
+    <!-- Hero -->
+    <section class="hero p-5 mb-5 text-center">
+      <h1 class="display-5 fw-bold mb-3">agent에게 말 한마디로,<br>내 제품을 <span class="text-kick">킥(Kick)</span> 하세요</h1>
+      <p class="lead text-muted mb-4">등록 Skill이 제품 설명·카테고리·카드뉴스·홍보 카피까지 만들어 바로 런칭합니다.</p>
+      <div class="d-flex justify-content-center gap-2 flex-wrap">
+        <a href="week.html" class="btn btn-kick btn-lg">이번 주 둘러보기</a>
+        <a href="products.html" class="btn btn-outline-dark btn-lg">제품 탐색하기</a>
+      </div>
+    </section>
+
+    <!-- 작동 방식 3스텝 -->
+    <section class="mb-5">
+      <h2 class="h4 fw-bold mb-4 text-center">어떻게 동작하나요?</h2>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="step-card p-4 text-center">
+            <div class="fs-1 mb-2">💬</div>
+            <h3 class="h6 fw-bold">① agent에게 요청</h3>
+            <p class="text-muted small mb-0">"이 제품 킥에 올려줘"라고 한 마디만 하면 시작됩니다.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="step-card p-4 text-center">
+            <div class="fs-1 mb-2">⚙️</div>
+            <h3 class="h6 fw-bold">② Skill이 정리·생성</h3>
+            <p class="text-muted small mb-0">핵심 가치·이름·설명·카테고리를 수집하고, 카드뉴스·홍보 카피·타겟 분석을 만듭니다.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="step-card p-4 text-center">
+            <div class="fs-1 mb-2">🚀</div>
+            <h3 class="h6 fw-bold">③ 즉시 런칭</h3>
+            <p class="text-muted small mb-0">보장된 품질의 런칭 페이지가 만들어지고, 위클리보드에 노출됩니다.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 이번주 하이라이트 -->
+    <section>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h4 fw-bold mb-0">이번 주 하이라이트</h2>
+        <a href="week.html" class="small">위클리보드 전체 보기 →</a>
+      </div>
+      <div class="row" id="highlight-grid"></div>
+    </section>
+  </main>
+
+  <div id="footer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="data/products.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const top3 = sortedByLikes(KICK_PRODUCTS).slice(0, 3);
+      renderProductGrid("highlight-grid", top3);
+    });
+  </script>
+</body>
+</html>

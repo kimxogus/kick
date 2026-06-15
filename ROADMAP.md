@@ -3,14 +3,15 @@
 ## Now
 
 - [x] MVP 시연 범위 확정
-- [ ] 탐색자/제작자 시연 시나리오 상세화
 - [x] MVP 실행/배포 전략 결정
 - [x] Next.js MVP 앱 스택 결정
+- [ ] 탐색자/제작자 시연 시나리오 상세화
 - [ ] Codex Sites 접근과 workspace 권한 확인
 - [ ] fallback 정적 파일 또는 localhost 실행 명령 결정
 - [ ] 탐색자 화면 구조 설계
 - [ ] 제작자 MCP/Skill 데모 범위 설계
 - [ ] 실제 서비스 기반 seed 데이터 후보 수집
+- [ ] 등록 Skill이 보장할 품질 기준 정의
 
 ## Next
 
@@ -22,7 +23,8 @@
 - [ ] Search 구현
 - [ ] Newsletter UI 구현
 - [ ] 제작자 등록/런칭 보조 흐름 구현
-- [ ] 사내 시연 데이터 준비
+- [ ] 시드 제품 데이터 준비
+- [ ] 라이브 데모와 녹화 백업 준비
 - [ ] Sites saved version 검토
 - [ ] 가능할 경우 발표용 Sites 배포 URL 확보
 
@@ -33,6 +35,7 @@
 - [ ] Ranking 고도화
 - [ ] kick contest
 - [ ] 행사 전용 kick contest
+- [ ] 댓글과 창작자 1:1 메시지
 - [ ] 운영자 큐레이션 백엔드
 - [ ] AI Slop 필터링
 - [ ] 실제 newsletter 발송
