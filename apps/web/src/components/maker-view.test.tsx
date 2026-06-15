@@ -84,4 +84,41 @@ describe("MakerView", () => {
     expect((await screen.findByRole("alert")).textContent).toContain("제품명이 필요합니다.");
     expect(screen.getByRole("button", { name: "분석하기" })).toBeTruthy();
   });
+
+  it("빈 risk와 추가 질문 목록에는 fallback 문구를 보여준다", async () => {
+    render(
+      <MakerView
+        onAnalyze={async () => ({
+          result: {
+            ...result,
+            risksOrUnknowns: [],
+            followUpQuestions: []
+          }
+        })}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "분석하기" }));
+
+    expect(await screen.findByText("즉시 시연 가능")).toBeTruthy();
+    expect(screen.getByText("추가 확인 질문 없음")).toBeTruthy();
+  });
+
+  it("제출 후보 저장 실패 시 submitted 상태로 넘어가지 않는다", async () => {
+    render(
+      <MakerView
+        onAnalyze={async () => ({ result })}
+        onSubmit={async () => Promise.reject(new Error("submission failed"))}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "분석하기" }));
+    expect(await screen.findByText("등록 후보 미리보기")).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "제출 후보 저장" }));
+
+    expect((await screen.findByRole("alert")).textContent).toContain("제출 후보 저장에 실패했습니다.");
+    expect(screen.queryByText("/submissions/submission_test")).toBeNull();
+    expect(screen.getByRole("button", { name: "제출 후보 저장" })).toBeTruthy();
+  });
 });
