@@ -25,7 +25,7 @@ MVP 우선 기능:
 - Product 소개 페이지
 - Weekly board와 viewer별 vote toggle
 - Search
-- 제작자 런칭 보조 Skill/MCP 데모
+- Skill + MCP 제작자 런칭 보조 데모
 - Newsletter UI
 - 실제 서비스 기반 seed 데이터
 - Codex Sites saved version 검토와 가능할 경우 발표용 배포 URL
