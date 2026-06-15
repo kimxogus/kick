@@ -8,16 +8,21 @@ Next.js App Router 기준 화면:
 
 - `/`: Weekly board, 검색, 태그 필터, newsletter 진입점
 - `/products/[slug]`: Product 소개 페이지
-- `/maker`: 제작자 런칭 보조와 등록 payload 준비
+- `/maker`: 제작자 런칭 보조와 등록 후보 준비
 - `/submissions/[id]`: 제작자 제출 후보 preview
+- `/contest`: 공개 contest 읽기 전용 목록
 
 ## 공통 UI 원칙
 
-- 첫 화면은 마케팅 랜딩이 아니라 Weekly board 제품 탐색 경험이다.
+- 첫 화면은 마케팅 랜딩이 아니라 Weekly board 제품 탐색 경험이다. 단, 제작자 런칭 보조의 가치를 짧게 보여주는 hero와 3단계 설명은 포함할 수 있다.
 - 화면은 사내 시연자가 바로 클릭하며 흐름을 보여줄 수 있어야 한다.
-- 실제 서비스 기반 seed 데이터를 사용해 빈 화면을 만들지 않는다.
+- 실제 서비스 기반 초기 콘텐츠를 사용해 빈 화면을 만들지 않는다.
+- 현재 실제 서비스 제품과 기존 샘플 HTML 제품을 함께 보여줘 MVP 화면의 콘텐츠 밀도를 확보한다.
+- 사용자 화면에는 `seed`, `더미`, `데모 미연결`, `표시용`, 관리자/운영자 CTA 같은 내부 구현 문구를 노출하지 않는다.
 - CTA는 vote, 제품 상세 보기, newsletter 구독, 제작자 등록 보조 시작에 집중한다.
+- 관리자 기능 진입은 향후 `/admin` route에서만 제공한다. 이번 MVP PR에는 `/admin` route와 관리자 버튼을 만들지 않는다.
 - 운영자 큐레이션 화면과 결제/후원 UI는 MVP에서 제외한다.
+- 정적 HTML 참고안의 warm orange 컬러, 제품 카드 hover, emoji thumbnail, pill형 vote 버튼, 랭킹 badge, 카드뉴스 시각 패턴을 Bootstrap dependency 없이 Next.js/CSS로 이식한다.
 
 ## 탐색자 플로우
 
@@ -32,13 +37,16 @@ Next.js App Router 기준 화면:
 필수 UI:
 
 - 서비스명 `kick`
+- 제작자 런칭 보조 가치를 요약하는 짧은 hero
+- Skill/MCP 기반 작동 방식 3단계
 - Weekly board 제목과 기간
 - 검색 input
 - 태그 필터
 - rank가 있는 제품 카드 목록
-- 제품명, 한 줄 소개, 썸네일, 태그, maker, vote 수, comment 수
+- 제품명, 한 줄 소개, category, emoji 또는 썸네일, 태그, maker, vote 수, comment 수
 - vote 버튼
 - 제품 상세 링크
+- contest 목록으로 이동하는 사용자용 링크
 - newsletter 구독 input
 
 상태:
@@ -48,6 +56,11 @@ Next.js App Router 기준 화면:
 - vote pending
 - newsletter submit success
 - validation error
+
+렌더링 정책:
+
+- vote count와 메모리 API 상태가 어긋나지 않도록 `/`는 Next.js dynamic render로 유지한다.
+- hydration 이후 `GET /api/boards/weekly`를 한 번 다시 호출해 route handler의 메모리 상태를 board UI에 동기화한다.
 
 ### Product 소개 페이지 `/products/[slug]`
 
@@ -61,8 +74,11 @@ Next.js App Router 기준 화면:
 
 - 제품명과 한 줄 소개
 - 큰 preview 이미지 또는 썸네일
+- Kick Point
+- 카드뉴스 문구
 - 제품 설명
 - 대상 사용자
+- 타겟별 홍보 메시지
 - 주요 use case
 - 태그
 - maker 정보
@@ -75,6 +91,26 @@ Next.js App Router 기준 화면:
 - not found
 - vote pending
 - newsletter submit success
+
+### Contest 목록 `/contest`
+
+사용 API:
+
+- `GET /api/contests`
+
+필수 UI:
+
+- 공개 contest 목록
+- contest 제목, 주최, 설명, 기간, 상태, 참여 제품 수
+- 대표 제품 링크
+- Weekly board와 제작자 런칭 보조로 이동하는 사용자용 링크
+
+제외 UI:
+
+- contest 개최 버튼
+- 상금 등록 또는 결제 CTA
+- 관리자/운영자 화면 진입 버튼
+- 기능 미연결 안내 문구
 
 ## 제작자 플로우
 
@@ -100,7 +136,7 @@ Next.js App Router 기준 화면:
 - 카드뉴스 문구
 - 채널별 홍보 카피
 - 추가 확인 질문
-- 등록 payload preview
+- 등록 후보 preview
 - 제출 후보 저장 버튼
 
 상태:
@@ -115,6 +151,12 @@ Next.js App Router 기준 화면:
 사용 API:
 
 - `GET /api/maker/submissions/:id`
+
+클라이언트 상태:
+
+- 제작자 제출 직후 `POST /api/maker/submissions` 응답의 `submission` snapshot을 브라우저 localStorage에 저장한다.
+- MVP preview 화면은 같은 브라우저에서 localStorage snapshot을 우선 사용한다.
+- 서버 메모리 저장소 기반 detail API는 같은 프로세스 내 조회와 후속 확장용 계약으로 유지한다.
 
 필수 UI:
 
@@ -131,11 +173,14 @@ Next.js App Router 기준 화면:
 UI 구현 후 `@컴퓨터` 또는 브라우저 자동화로 아래를 확인한다.
 
 - `/`에서 Weekly board 제품 카드가 보인다.
+- `/`에서 Skill/MCP 작동 방식 3단계가 보인다.
 - 검색어 입력 시 제품 목록이 필터링된다.
 - 태그 클릭 시 제품 목록이 필터링된다.
 - vote 버튼을 누르면 vote count와 선택 상태가 바뀐다.
 - 제품 카드를 클릭하면 `/products/[slug]`로 이동한다.
-- 제품 상세에서 핵심 정보와 vote 버튼이 보인다.
+- 제품 상세에서 Kick Point, 카드뉴스, 타겟별 홍보 메시지와 vote 버튼이 보인다.
+- `/contest`에서 공개 contest 목록과 대표 제품 링크가 보인다.
+- `/contest`에 contest 개최, 상금 등록, 관리자 CTA가 보이지 않는다.
 - newsletter에 잘못된 이메일을 입력하면 오류가 보인다.
 - newsletter에 정상 이메일을 입력하면 성공 상태가 보인다.
 - `/maker`에서 필수 입력 후 분석 결과가 표시된다.

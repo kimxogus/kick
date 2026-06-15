@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160" role="img" aria-label="Perplexity product preview">
+  <rect width="240" height="160" fill="#0f766e"/>
+  <circle cx="92" cy="78" r="36" fill="#ecfeff"/>
+  <circle cx="144" cy="78" r="36" fill="#fef3c7"/>
+  <path d="M76 110h88" stroke="#042f2e" stroke-width="10" stroke-linecap="round"/>
+</svg>

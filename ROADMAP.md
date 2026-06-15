@@ -5,25 +5,26 @@
 - [x] MVP 시연 범위 확정
 - [x] MVP 실행/배포 전략 결정
 - [x] Next.js MVP 앱 스택 결정
+- [x] fallback localhost 실행 명령 결정
+- [x] 탐색자 화면 구조 설계
+- [x] MVP UI/API 계약 작성
 - [ ] 탐색자/제작자 시연 시나리오 상세화
 - [ ] Codex Sites 접근과 workspace 권한 확인
-- [ ] fallback 정적 파일 또는 localhost 실행 명령 결정
-- [ ] 탐색자 화면 구조 설계
 - [ ] 제작자 MCP/Skill 데모 범위 설계
-- [ ] 실제 서비스 기반 seed 데이터 후보 수집
 - [ ] 등록 Skill이 보장할 품질 기준 정의
 
 ## Next
 
-- [ ] 앱 스캐폴딩
-- [ ] 백엔드 API 계약 테스트 작성
-- [ ] Weekly board 구현
-- [ ] Product 소개 페이지 구현
-- [ ] Vote 구현
-- [ ] Search 구현
-- [ ] Newsletter UI 구현
-- [ ] 제작자 등록/런칭 보조 흐름 구현
-- [ ] 시드 제품 데이터 준비
+- [x] 앱 스캐폴딩
+- [x] 백엔드 API 계약 테스트 작성
+- [x] Weekly board 구현
+- [x] Product 소개 페이지 구현
+- [x] Vote 구현
+- [x] Search 구현
+- [x] Newsletter UI 구현
+- [x] 제작자 등록/런칭 보조 흐름 구현
+- [x] 공개 contest 읽기 전용 화면 구현
+- [ ] 사내 시연 데이터 보강
 - [ ] 라이브 데모와 녹화 백업 준비
 - [ ] Sites saved version 검토
 - [ ] 가능할 경우 발표용 Sites 배포 URL 확보
@@ -33,7 +34,7 @@
 - [ ] 로컬 Skill 분석/등록 로직의 backend mirror
 - [ ] Daily, Monthly, Yearly board
 - [ ] Ranking 고도화
-- [ ] kick contest
+- [ ] kick contest 생성/운영 기능
 - [ ] 행사 전용 kick contest
 - [ ] 댓글과 창작자 1:1 메시지
 - [ ] 운영자 큐레이션 백엔드

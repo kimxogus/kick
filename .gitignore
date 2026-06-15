@@ -4,3 +4,12 @@ CLAUDE.local.md
 .env
 .env.*
 !.env.example
+
+# Node/Next.js 생성물
+node_modules/
+.next/
+out/
+coverage/
+.playwright-cli/
+*.tsbuildinfo
+.superpowers/
