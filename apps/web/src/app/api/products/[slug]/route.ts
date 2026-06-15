@@ -11,7 +11,7 @@ export async function GET(request: Request, context: RouteContext): Promise<Resp
   try {
     const { slug } = await context.params;
     const url = new URL(request.url);
-    return Response.json(kickService.getProductDetail(slug, url.searchParams.get("viewer_id") ?? undefined));
+    return Response.json(await kickService.getProductDetail(slug, url.searchParams.get("viewer_id") ?? undefined));
   } catch (error) {
     return jsonError(error);
   }

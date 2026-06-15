@@ -14,11 +14,11 @@
 - Newsletter 구독 의사 저장
 - 제작자 등록 후보 준비와 제출 후보 저장
 - 제작자 런칭 보조 분석 결과 표현
+- Neon Postgres 영속 저장과 seed reset
 
 제외:
 
 - 실제 Auth
-- 원격 DB 영속화
 - 파일 업로드
 - 실제 newsletter 발송
 - 운영자 큐레이션 백엔드
@@ -30,7 +30,9 @@
 - 모든 API 응답은 JSON이다.
 - 날짜는 ISO 8601 문자열을 사용한다.
 - ID는 사람이 읽을 수 있는 slug 또는 `kind_number` 형식 문자열을 사용한다.
-- MVP의 write 동작은 서버 메모리 저장소를 사용할 수 있다.
+- `DATABASE_URL`이 있으면 write 동작은 Neon Postgres에 저장한다.
+- `DATABASE_URL`이 없으면 write 동작은 서버 메모리 저장소를 사용할 수 있다.
+- seed reset은 현재 repo seed 제품, board, launch, contest 상태를 source of truth로 사용한다.
 - API 실패 응답은 아래 형식을 따른다.
 
 ```json
@@ -390,9 +392,33 @@ type MakerSubmissionDetailResponse = {
 
 정책:
 
-- 서버 메모리 저장소에 없는 ID는 `NOT_FOUND`를 반환한다.
-- MVP에서는 제출 후보가 서버 재시작 후 사라질 수 있다.
-- `/submissions/[id]` 화면은 서버 메모리 저장소가 비어 있는 경우에도 제출 직후 같은 브라우저에서 preview를 볼 수 있도록 localStorage snapshot을 우선 사용할 수 있다.
+- 서버 저장소에 없는 ID는 `NOT_FOUND`를 반환한다.
+- `DATABASE_URL`이 있으면 제출 후보는 Postgres에 영속 저장된다.
+- `DATABASE_URL`이 없는 fallback에서는 제출 후보가 서버 재시작 후 사라질 수 있다.
+- `/submissions/[id]` 화면은 fallback 환경에서도 제출 직후 같은 브라우저에서 preview를 볼 수 있도록 localStorage snapshot을 우선 사용할 수 있다.
+
+### `POST /api/admin/reset`
+
+현재 seed 상태로 저장소를 초기화한다.
+
+성공 응답:
+
+```ts
+type AdminResetResponse = {
+  status: "reset";
+  storage: "postgres" | "memory";
+  products: number;
+  launches: number;
+  contests: number;
+};
+```
+
+정책:
+
+- `/admin` 화면은 사용자 화면에 링크하지 않고 direct route로만 접근한다.
+- MVP에서는 사용자가 선택한 정책에 따라 별도 token 없이 reset을 허용한다.
+- reset은 products, boards, launches, contests를 현재 seed 상태로 복원하고 votes, newsletter subscriptions, maker submissions를 비운다.
+- 운영자 인증과 audit log는 후속 Auth/Admin ADR에서 다룬다.
 
 ## API 테스트 기준
 
@@ -408,3 +434,4 @@ type MakerSubmissionDetailResponse = {
 - launch assist는 필수 입력 누락 시 follow-up question을 반환해야 한다.
 - maker submission은 필수 payload 누락 시 validation error를 반환해야 한다.
 - maker submission detail은 저장된 제출 후보를 ID로 조회해야 한다.
+- admin reset은 추가된 write 데이터를 비우고 현재 seed 제품/contest 수를 반환해야 한다.

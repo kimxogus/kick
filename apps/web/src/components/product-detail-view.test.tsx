@@ -9,8 +9,8 @@ describe("ProductDetailView", () => {
     vi.unstubAllGlobals();
   });
 
-  it("제품 상세 핵심 정보와 관련 제품을 보여준다", () => {
-    const detail = createKickService().getProductDetail("cursor");
+  it("제품 상세 핵심 정보와 관련 제품을 보여준다", async () => {
+    const detail = await createKickService().getProductDetail("cursor");
 
     render(<ProductDetailView detail={detail} />);
 
@@ -23,8 +23,8 @@ describe("ProductDetailView", () => {
     expect(screen.getByText("Perplexity")).toBeTruthy();
   });
 
-  it("emoji 기반 샘플 제품 상세를 샘플 HTML 톤으로 보여준다", () => {
-    const detail = createKickService().getProductDetail("momento");
+  it("emoji 기반 샘플 제품 상세를 샘플 HTML 톤으로 보여준다", async () => {
+    const detail = await createKickService().getProductDetail("momento");
 
     render(<ProductDetailView detail={detail} />);
 
@@ -36,7 +36,7 @@ describe("ProductDetailView", () => {
   });
 
   it("제품 상세에서 newsletter 구독 상태를 보여준다", async () => {
-    const detail = createKickService().getProductDetail("cursor");
+    const detail = await createKickService().getProductDetail("cursor");
 
     render(
       <ProductDetailView
@@ -63,14 +63,14 @@ describe("ProductDetailView", () => {
   it("같은 viewer의 vote 상태를 제품 상세에서 재동기화한다", async () => {
     const initialService = createKickService();
     const syncedService = createKickService();
-    syncedService.toggleVote({ launchId: "launch_cursor", viewerId: "viewer_detail" });
+    await syncedService.toggleVote({ launchId: "launch_cursor", viewerId: "viewer_detail" });
     window.localStorage.setItem("kick_viewer_id", "viewer_detail");
     const fetchSpy = vi.fn(async () =>
-      Response.json(syncedService.getProductDetail("cursor", "viewer_detail"))
+      Response.json(await syncedService.getProductDetail("cursor", "viewer_detail"))
     );
     vi.stubGlobal("fetch", fetchSpy);
 
-    render(<ProductDetailView detail={initialService.getProductDetail("cursor")} />);
+    render(<ProductDetailView detail={await initialService.getProductDetail("cursor")} />);
 
     await waitFor(() => {
       expect(screen.getByRole("button", { name: "Cursor vote" }).getAttribute("aria-pressed")).toBe("true");

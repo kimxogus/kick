@@ -1,0 +1,115 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  verify:
+    name: CI / verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npm run test:coverage -w apps/web
+
+      - name: Render coverage summary
+        run: node apps/web/scripts/coverage-summary.mjs apps/web/coverage/coverage-summary.json apps/web/coverage/coverage-summary.md
+
+      - name: Write coverage job summary
+        run: cat apps/web/coverage/coverage-summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Typecheck
+        run: npm run lint -w apps/web
+
+      - name: Build
+        run: npm run build -w apps/web
+
+  coverage-comment:
+    name: coverage-comment
+    needs: verify
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npm run test:coverage -w apps/web
+
+      - name: Render coverage summary
+        run: node apps/web/scripts/coverage-summary.mjs apps/web/coverage/coverage-summary.json apps/web/coverage/coverage-summary.md
+
+      - name: Upsert coverage PR comment
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
+        with:
+          script: |
+            const fs = require("node:fs");
+
+            const marker = "<!-- kick-coverage-report -->";
+            const report = fs.readFileSync("apps/web/coverage/coverage-summary.md", "utf8");
+            const body = `${marker}\n${report}`;
+            const issue_number = context.issue.number;
+            const { owner, repo } = context.repo;
+
+            const comments = await github.rest.issues.listComments({
+              owner,
+              repo,
+              issue_number,
+              per_page: 100,
+            });
+            const previous = comments.data.find((comment) => {
+              return comment.user?.type === "Bot" && comment.body?.includes(marker);
+            });
+
+            if (previous) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: previous.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body,
+              });
+            }

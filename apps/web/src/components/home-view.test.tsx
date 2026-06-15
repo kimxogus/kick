@@ -1,12 +1,16 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { HomeView } from "./home-view";
 import { createKickService } from "@/server/kick-service";
 
 describe("HomeView", () => {
-  it("Weekly board 제품을 보여주고 검색어로 필터링한다", () => {
-    const initialResponse = createKickService().getWeeklyBoard({});
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("Weekly board 제품을 보여주고 검색어로 필터링한다", async () => {
+    const initialResponse = await createKickService().getWeeklyBoard({});
 
     render(<HomeView initialResponse={initialResponse} />);
 
@@ -42,8 +46,8 @@ describe("HomeView", () => {
     expect(screen.queryByRole("link", { name: "Cursor" })).toBeNull();
   });
 
-  it("샘플 제품 category 검색과 emoji thumbnail을 보여준다", () => {
-    const initialResponse = createKickService().getWeeklyBoard({});
+  it("샘플 제품 category 검색과 emoji thumbnail을 보여준다", async () => {
+    const initialResponse = await createKickService().getWeeklyBoard({});
 
     render(<HomeView initialResponse={initialResponse} />);
 
@@ -57,7 +61,7 @@ describe("HomeView", () => {
   });
 
   it("vote 버튼을 누르면 optimistic count와 선택 상태를 갱신한다", async () => {
-    const initialResponse = createKickService().getWeeklyBoard({});
+    const initialResponse = await createKickService().getWeeklyBoard({});
 
     render(
       <HomeView
@@ -74,5 +78,82 @@ describe("HomeView", () => {
 
     expect(await screen.findByText("429")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Cursor vote" }).getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it("검색 결과가 없으면 empty state를 보여준다", async () => {
+    const initialResponse = await createKickService().getWeeklyBoard({});
+
+    render(<HomeView initialResponse={initialResponse} />);
+
+    fireEvent.change(screen.getByLabelText("제품 검색"), {
+      target: { value: "no matching launch" }
+    });
+
+    expect(screen.getByText("조건에 맞는 제품이 없습니다.")).toBeTruthy();
+  });
+
+  it("newsletter 구독 성공과 실패 상태를 보여준다", async () => {
+    const initialResponse = await createKickService().getWeeklyBoard({});
+    const fetchSpy = vi.fn(async (input: RequestInfo | URL) => {
+      if (String(input).startsWith("/api/boards/weekly")) {
+        return Response.json(initialResponse);
+      }
+      return Response.json({
+        subscription: {
+          id: "newsletter_test",
+          email: "maker@example.com",
+          source: "board",
+          createdAt: "2026-06-15T00:00:00.000Z"
+        }
+      });
+    });
+    vi.stubGlobal("fetch", fetchSpy);
+
+    render(<HomeView initialResponse={initialResponse} />);
+
+    fireEvent.change(screen.getByPlaceholderText("you@example.com"), {
+      target: { value: "maker@example.com" }
+    });
+    fireEvent.click(screen.getByRole("button", { name: "구독" }));
+
+    expect(await screen.findByText("구독 의사를 저장했습니다.")).toBeTruthy();
+    expect(fetchSpy).toHaveBeenCalledWith(
+      "/api/newsletter-subscriptions",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ email: "maker@example.com", source: "board" })
+      })
+    );
+  });
+
+  it("newsletter 구독 실패 시 이메일 확인 메시지를 보여준다", async () => {
+    const initialResponse = await createKickService().getWeeklyBoard({});
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL) => {
+        if (String(input).startsWith("/api/boards/weekly")) {
+          return Response.json(initialResponse);
+        }
+        return Response.json(
+          {
+            error: {
+              code: "VALIDATION_ERROR",
+              message: "이메일 형식을 확인해주세요.",
+              fields: ["email"]
+            }
+          },
+          { status: 400 }
+        );
+      })
+    );
+
+    render(<HomeView initialResponse={initialResponse} />);
+
+    fireEvent.change(screen.getByPlaceholderText("you@example.com"), {
+      target: { value: "bad-email" }
+    });
+    fireEvent.click(screen.getByRole("button", { name: "구독" }));
+
+    expect((await screen.findByRole("alert")).textContent).toContain("이메일 형식을 확인해주세요.");
   });
 });

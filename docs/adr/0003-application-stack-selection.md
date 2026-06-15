@@ -1,9 +1,12 @@
 # 0003. MVP 실행 및 배포 전략 선택
 
-- 상태: Accepted
+- 상태: Superseded
 - 날짜: 2026-06-09
 - 갱신: 2026-06-13
+- 대체: `docs/adr/0007-vercel-neon-postgres-persistence.md`
 - 관련 문서: `README.md`, `SPEC.md`, `ARCHITECTURE.md`, `TODO.md`, `ROADMAP.md`, `docs/research/2026-06-13-product-and-agent-flow-research.md`
+
+> 현재 MVP 배포와 영속화 기준은 `docs/adr/0007-vercel-neon-postgres-persistence.md`를 따른다. 이 문서는 Codex Sites 우선 전략을 선택했던 당시의 맥락과 근거를 보존한다.
 
 ## 맥락
 
@@ -15,7 +18,7 @@ MVP는 1주 안에 사내 행사에서 시연되어야 한다. 핵심 목표는 
 
 OpenAI Codex Sites는 Codex에서 웹사이트와 웹 앱을 저장, 배포, 점검할 수 있는 preview 기능이다. Sites는 saved version과 deploy 단계를 분리하고, Cloudflare Worker-compatible ES module output을 요구한다. 지속 데이터가 필요하면 D1, 업로드 파일이 필요하면 R2를 선택할 수 있다. Codex pricing 문서는 Sites가 preview 기간 무료이며 가격 정보는 추후 제공될 예정이라고 설명한다.
 
-다만 Sites plugin 접근, workspace 권한, Enterprise RBAC, preview 정책 변화로 발표 직전에 막힐 수 있다. 따라서 Sites를 우선하되, 정적 파일 로컬 실행 또는 localhost 실행 fallback을 반드시 유지해야 한다.
+다만 Sites plugin 접근, workspace 권한, Enterprise RBAC, preview 정책 변화로 발표 직전에 막힐 수 있다. 이후 팀은 발표용 URL과 영속 데이터 reset 요구를 우선해 `docs/adr/0007-vercel-neon-postgres-persistence.md`에서 Vercel + Neon Postgres를 현재 MVP 기준으로 채택했다.
 
 ## 결정
 

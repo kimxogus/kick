@@ -10,7 +10,7 @@ type RouteContext = {
 export async function GET(_request: Request, context: RouteContext): Promise<Response> {
   try {
     const { id } = await context.params;
-    return Response.json(kickService.getMakerSubmission(id));
+    return Response.json(await kickService.getMakerSubmission(id));
   } catch (error) {
     return jsonError(error);
   }

@@ -6,13 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "db:migrate": "tsx scripts/db-migrate.ts",
+    "db:reset": "tsx scripts/db-reset.ts",
     "lint": "npm run typecheck",
     "smoke:ui": "node tests/ui-smoke.mjs",
     "test": "vitest",
+    "test:coverage": "vitest run --coverage",
     "test:run": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@neondatabase/serverless": "1.1.0",
     "next": "16.2.9",
     "react": "19.2.7",
     "react-dom": "19.2.7"
@@ -23,8 +27,10 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
+    "@vitest/coverage-v8": "4.1.8",
     "jsdom": "latest",
     "playwright": "1.60.0",
+    "tsx": "4.22.4",
     "typescript": "latest",
     "vitest": "4.1.8"
   }

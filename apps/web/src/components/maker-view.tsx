@@ -52,10 +52,16 @@ export function MakerView({ onAnalyze = defaultAnalyze, onSubmit = defaultSubmit
     if (!result) {
       return;
     }
-    const response = await onSubmit(result.submissionPayload);
-    saveSubmissionPreview(response.submission);
-    setPreviewUrl(response.previewUrl);
-    setStatus("submitted");
+    setErrorMessage("");
+    try {
+      const response = await onSubmit(result.submissionPayload);
+      saveSubmissionPreview(response.submission);
+      setPreviewUrl(response.previewUrl);
+      setStatus("submitted");
+    } catch {
+      setStatus("ready");
+      setErrorMessage("제출 후보 저장에 실패했습니다.");
+    }
   }
 
   return (

@@ -2,6 +2,7 @@
 
 - 상태: Accepted
 - 날짜: 2026-06-14
+- 갱신: 2026-06-15
 - 관련 문서: `README.md`, `SPEC.md`, `ARCHITECTURE.md`, `TODO.md`, `docs/contracts/mvp-data-and-api-contract.md`, `docs/contracts/mvp-ui-contract.md`
 
 ## 맥락
@@ -26,9 +27,9 @@ MVP 앱 스택은 Next.js App Router, TypeScript, Vitest, React Testing Library,
    - route handler는 `Response.json()`과 Web `Request` API를 기본으로 사용한다.
    - 도메인 로직은 route handler와 분리해 `src/server/` 또는 `src/domain/`에서 테스트한다.
 3. 데이터
-   - MVP는 원격 DB 없이 seed fixture와 메모리 저장소로 시작한다.
+   - 최초 구현은 seed fixture와 메모리 저장소로 시작했다.
+   - 2026-06-15 이후 MVP 영속화와 reset 기준은 `docs/adr/0007-vercel-neon-postgres-persistence.md`가 우선한다.
    - 데이터 구조와 API 응답 계약은 `docs/contracts/mvp-data-and-api-contract.md`를 기준으로 한다.
-   - D1/R2 연동은 지속 데이터 또는 업로드가 실제로 필요해질 때 후속 ADR로 결정한다.
 4. 테스트
    - 백엔드 도메인 로직과 API 계약은 Vitest로 TDD 구현한다.
    - UI 컴포넌트와 사용자 흐름은 React Testing Library와 Playwright로 검증한다.
@@ -50,7 +51,7 @@ MVP 앱 스택은 Next.js App Router, TypeScript, Vitest, React Testing Library,
 - 백엔드 계약과 UI 계약은 구현 전 `docs/contracts/`에 고정한다.
 - route handler의 응답은 UI와 테스트가 공유할 수 있도록 타입과 fixture를 분리한다.
 - MVP에서는 Auth를 구현하지 않고, `viewer_id`를 클라이언트 로컬 식별자로 대체한다.
-- 투표는 데모 목적의 메모리 상태로 처리하며 새로고침 또는 서버 재시작 시 초기화될 수 있다.
+- `DATABASE_URL`이 없을 때는 투표와 제출 후보를 데모 목적의 메모리 상태로 처리하며 새로고침 또는 서버 재시작 시 초기화될 수 있다.
 - 검색은 제품명, 한 줄 소개, 상세 설명, 태그, 타겟 사용자에 대한 클라이언트/API 필터링으로 시작한다.
 
 ## 후속 작업

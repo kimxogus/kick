@@ -1,11 +1,15 @@
 import { render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { SubmissionView } from "./submission-view";
 
 describe("SubmissionView", () => {
   beforeEach(() => {
     window.localStorage.clear();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it("localStorage에 저장된 제출 후보 preview를 보여준다", async () => {
@@ -31,5 +35,55 @@ describe("SubmissionView", () => {
     expect(await screen.findByRole("heading", { name: "DemoFlow" })).toBeTruthy();
     expect(screen.getByText("DemoFlow로 발표 준비를 정리하세요.")).toBeTruthy();
     expect(screen.getByText("MVP에서는 제출 후보를 Weekly board에 자동 반영하지 않습니다.")).toBeTruthy();
+  });
+
+  it("API와 local preview 모두 없으면 not found 화면을 보여준다", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        Response.json(
+          {
+            error: {
+              code: "NOT_FOUND",
+              message: "제출 후보를 찾을 수 없습니다.",
+              fields: ["id"]
+            }
+          },
+          { status: 404 }
+        )
+      )
+    );
+
+    render(<SubmissionView id="submission_missing" />);
+
+    expect(await screen.findByRole("heading", { name: "제출 후보를 찾을 수 없습니다." })).toBeTruthy();
+  });
+
+  it("local preview가 있으면 API 실패에도 preview를 유지한다", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => Promise.reject(new Error("network down")))
+    );
+    window.localStorage.setItem(
+      "kick_submission_submission_cached",
+      JSON.stringify({
+        id: "submission_cached",
+        status: "received",
+        createdAt: "2026-06-14T00:00:00.000Z",
+        viewerId: "viewer_test",
+        payload: {
+          productName: "CachedFlow",
+          tagline: "CachedFlow로 발표 준비를 정리하세요.",
+          description: "local preview가 우선 보여야 합니다.",
+          tags: ["Demo"],
+          makerNote: "캐시된 후보"
+        }
+      })
+    );
+
+    render(<SubmissionView id="submission_cached" />);
+
+    expect(await screen.findByRole("heading", { name: "CachedFlow" })).toBeTruthy();
+    expect(screen.queryByRole("heading", { name: "제출 후보를 찾을 수 없습니다." })).toBeNull();
   });
 });
