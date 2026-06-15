@@ -16,6 +16,9 @@ describe("ProductDetailView", () => {
 
     expect(screen.getByRole("heading", { name: "Cursor" })).toBeTruthy();
     expect(screen.getByText("AI와 함께 코드를 읽고 고치는 개발자용 에디터")).toBeTruthy();
+    expect(screen.getByText("Kick Point")).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "카드뉴스" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "타겟별 홍보 메시지" })).toBeTruthy();
     expect(screen.getByText("관련 제품")).toBeTruthy();
     expect(screen.getByText("Perplexity")).toBeTruthy();
   });

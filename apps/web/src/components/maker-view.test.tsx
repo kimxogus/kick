@@ -5,7 +5,7 @@ import { MakerView } from "./maker-view";
 import type { LaunchAssistResult, MakerSubmissionResponse } from "@/server/kick-service";
 
 const result: LaunchAssistResult = {
-  appealPoints: ["명확한 시연 흐름", "등록 payload 생성", "홍보 문구 재사용"],
+  appealPoints: ["명확한 시연 흐름", "등록 후보 생성", "홍보 문구 재사용"],
   targetAnalysis: ["maker"],
   sellingPoints: ["데모 준비 시간을 줄입니다."],
   differentiators: ["분석과 등록을 한 흐름으로 연결합니다."],
@@ -65,7 +65,7 @@ describe("MakerView", () => {
     fireEvent.click(screen.getByRole("button", { name: "분석하기" }));
 
     expect(await screen.findByText("DemoFlow로 발표 준비를 정리하세요.")).toBeTruthy();
-    expect(screen.getByText("등록 payload")).toBeTruthy();
+    expect(screen.getByText("등록 후보 미리보기")).toBeTruthy();
     expect(screen.getByText("DemoFlow 소개")).toBeTruthy();
     expect(screen.getByText("문제")).toBeTruthy();
     expect(screen.getByText("Launch-ready demo prep.")).toBeTruthy();

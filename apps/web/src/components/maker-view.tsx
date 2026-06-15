@@ -63,8 +63,8 @@ export function MakerView({ onAnalyze = defaultAnalyze, onSubmit = defaultSubmit
       <section className="board-hero">
         <div>
           <p className="eyebrow">maker flow</p>
-          <h1>제품 이야기를 launch-ready payload로 정리</h1>
-          <p className="hero-copy">제품 설명을 입력하면 타겟, 셀링 포인트, 홍보 문구와 제출 후보를 만든다.</p>
+          <h1>제품 이야기를 런칭 가능한 소개로 정리</h1>
+          <p className="hero-copy">제품 설명을 입력하면 타겟, 셀링 포인트, 카드뉴스 문구와 제출 후보를 만듭니다.</p>
         </div>
         <a className="secondary-link" href="/">
           Weekly board
@@ -126,7 +126,7 @@ export function MakerView({ onAnalyze = defaultAnalyze, onSubmit = defaultSubmit
             <ResultList title="추가 확인 질문" items={result.followUpQuestions} emptyText="추가 확인 질문 없음" />
           </div>
           <article className="payload-preview">
-            <h3>등록 payload</h3>
+            <h3>등록 후보 미리보기</h3>
             <p>{result.submissionPayload.productName}</p>
             <p>{result.submissionPayload.description}</p>
             <div className="meta-row">

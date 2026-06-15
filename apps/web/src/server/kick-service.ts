@@ -19,9 +19,17 @@ export type Product = {
   tags: string[];
   targetUsers: string[];
   useCases: string[];
+  kickPoint: string;
+  cardNewsCopy: string[];
+  targetMessages: TargetMessage[];
   pricing?: string;
   status: "featured" | "published" | "draft";
   createdAt: string;
+};
+
+export type TargetMessage = {
+  audience: string;
+  message: string;
 };
 
 export type Launch = {
@@ -33,6 +41,19 @@ export type Launch = {
   isVotedByViewer: boolean;
   featuredReason: string;
   launchedAt: string;
+};
+
+export type Contest = {
+  id: string;
+  slug: string;
+  title: string;
+  host: string;
+  description: string;
+  status: "open" | "upcoming" | "closed";
+  startsOn: string;
+  endsOn: string;
+  productCount: number;
+  featuredLaunches: Launch[];
 };
 
 export type Board = {
@@ -63,6 +84,10 @@ export type ProductDetailResponse = {
   product: Product;
   launch: Launch;
   relatedLaunches: Launch[];
+};
+
+export type ContestListResponse = {
+  contests: Contest[];
 };
 
 export type VoteRequest = {
@@ -171,6 +196,7 @@ export class KickServiceError extends Error {
 export type KickService = {
   getWeeklyBoard(request: WeeklyBoardRequest): WeeklyBoardResponse;
   getProductDetail(slug: string, viewerId?: string): ProductDetailResponse;
+  getContests(): ContestListResponse;
   toggleVote(request: VoteRequest): VoteResponse;
   createNewsletterSubscription(request: NewsletterRequest): NewsletterResponse;
   createLaunchAssist(request: MakerSubmissionDraft): LaunchAssistResponse;
@@ -179,11 +205,15 @@ export type KickService = {
 };
 
 type StoredLaunch = Omit<Launch, "isVotedByViewer">;
+type StoredContest = Omit<Contest, "featuredLaunches"> & {
+  featuredLaunchIds: string[];
+};
 type UnknownRecord = Record<string, unknown>;
 
 type KickState = {
   board: Omit<Board, "launches">;
   launches: StoredLaunch[];
+  contests: StoredContest[];
   votes: Map<string, Set<string>>;
   subscriptions: NewsletterSubscription[];
   submissions: MakerSubmission[];
@@ -235,6 +265,22 @@ const seedLaunches: StoredLaunch[] = [
       tags: ["AI", "Productivity", "Developer Tools"],
       targetUsers: ["developer", "engineering team"],
       useCases: ["코드 검색", "리팩터링", "AI pair programming"],
+      kickPoint: "코드베이스 이해와 변경 적용을 한 흐름으로 묶어 개발자의 반복 시간을 줄입니다.",
+      cardNewsCopy: [
+        "낯선 코드도 대화로 맥락을 찾습니다.",
+        "변경 범위를 제안받고 바로 고칩니다.",
+        "팀의 개발 속도를 코드 리뷰 전 단계부터 끌어올립니다."
+      ],
+      targetMessages: [
+        {
+          audience: "개발자",
+          message: "큰 코드베이스를 읽는 시간을 줄이고 바로 수정 흐름으로 넘어갈 수 있습니다."
+        },
+        {
+          audience: "엔지니어링 팀",
+          message: "반복적인 탐색과 리팩터링을 줄여 제품 개발에 더 많은 시간을 씁니다."
+        }
+      ],
       pricing: "Free / Pro",
       status: "featured",
       createdAt: "2026-06-10T00:00:00.000Z"
@@ -261,6 +307,22 @@ const seedLaunches: StoredLaunch[] = [
       tags: ["AI", "Search", "Research"],
       targetUsers: ["researcher", "founder", "marketer"],
       useCases: ["시장 조사", "자료 탐색", "근거 기반 답변"],
+      kickPoint: "출처가 있는 AI 답변으로 탐색자가 정보의 신뢰도를 빠르게 판단하게 합니다.",
+      cardNewsCopy: [
+        "질문하면 답과 출처를 함께 봅니다.",
+        "시장 조사와 자료 탐색을 한 화면에서 끝냅니다.",
+        "팀 의사결정에 필요한 근거를 빠르게 공유합니다."
+      ],
+      targetMessages: [
+        {
+          audience: "리서처",
+          message: "흩어진 자료를 출처와 함께 정리해 검증 시간을 줄입니다."
+        },
+        {
+          audience: "창업자",
+          message: "시장과 경쟁 제품을 빠르게 훑고 다음 실험을 정합니다."
+        }
+      ],
       status: "published",
       createdAt: "2026-06-11T00:00:00.000Z"
     },
@@ -286,6 +348,22 @@ const seedLaunches: StoredLaunch[] = [
       tags: ["AI", "Meetings", "Productivity"],
       targetUsers: ["product manager", "sales team", "founder"],
       useCases: ["회의 요약", "액션 아이템 정리", "고객 미팅 기록"],
+      kickPoint: "회의에서 놓치기 쉬운 맥락과 후속 액션을 자동으로 정리합니다.",
+      cardNewsCopy: [
+        "회의 흐름을 방해하지 않고 기록합니다.",
+        "중요한 논의와 액션 아이템을 요약합니다.",
+        "고객 미팅 후속 작업을 더 빠르게 시작합니다."
+      ],
+      targetMessages: [
+        {
+          audience: "제품 매니저",
+          message: "회의 후 정리 시간을 줄이고 결정 사항을 바로 공유할 수 있습니다."
+        },
+        {
+          audience: "세일즈 팀",
+          message: "고객 미팅의 니즈와 다음 액션을 놓치지 않습니다."
+        }
+      ],
       status: "published",
       createdAt: "2026-06-12T00:00:00.000Z"
     },
@@ -311,6 +389,22 @@ const seedLaunches: StoredLaunch[] = [
       tags: ["AI", "No-code", "Developer Tools"],
       targetUsers: ["maker", "founder", "designer"],
       useCases: ["MVP 제작", "프로토타입", "사내 도구 초안"],
+      kickPoint: "아이디어를 바로 앱 초안으로 바꿔 초기 검증까지의 시간을 줄입니다.",
+      cardNewsCopy: [
+        "만들고 싶은 앱을 자연어로 설명합니다.",
+        "화면과 동작 초안을 빠르게 확인합니다.",
+        "피드백을 반영해 제품 방향을 좁힙니다."
+      ],
+      targetMessages: [
+        {
+          audience: "메이커",
+          message: "구현 전에 아이디어를 앱 형태로 보여주며 반응을 확인할 수 있습니다."
+        },
+        {
+          audience: "창업자",
+          message: "초기 MVP를 빠르게 만들어 고객 인터뷰의 질을 높입니다."
+        }
+      ],
       status: "published",
       createdAt: "2026-06-13T00:00:00.000Z"
     },
@@ -329,10 +423,38 @@ const boardBase: Omit<Board, "launches"> = {
   endsOn: "2026-06-14"
 };
 
+const contestFixtures: StoredContest[] = [
+  {
+    id: "contest_ai_workflow",
+    slug: "ai-workflow-challenge",
+    title: "AI Workflow Challenge",
+    host: "kick community",
+    description: "일하는 방식을 바꾸는 AI 제품을 모아보는 공개 챌린지입니다.",
+    status: "open",
+    startsOn: "2026-06-08",
+    endsOn: "2026-06-21",
+    productCount: 12,
+    featuredLaunchIds: ["launch_cursor", "launch_granola"]
+  },
+  {
+    id: "contest_founder_tools",
+    slug: "founder-tools-week",
+    title: "Founder Tools Week",
+    host: "kick editorial",
+    description: "창업자가 시장 조사, MVP 제작, 팀 운영에 바로 쓸 수 있는 제품을 소개합니다.",
+    status: "upcoming",
+    startsOn: "2026-06-22",
+    endsOn: "2026-06-28",
+    productCount: 8,
+    featuredLaunchIds: ["launch_perplexity", "launch_lovable"]
+  }
+];
+
 export function createKickService(): KickService {
   const state: KickState = {
     board: { ...boardBase },
     launches: structuredClone(seedLaunches),
+    contests: structuredClone(contestFixtures),
     votes: new Map(),
     subscriptions: [],
     submissions: []
@@ -376,6 +498,26 @@ export function createKickService(): KickService {
         product: launch.product,
         launch: withViewerVote(launch, state, viewerId),
         relatedLaunches
+      };
+    },
+
+    getContests() {
+      return {
+        contests: state.contests.map((contest) => ({
+          id: contest.id,
+          slug: contest.slug,
+          title: contest.title,
+          host: contest.host,
+          description: contest.description,
+          status: contest.status,
+          startsOn: contest.startsOn,
+          endsOn: contest.endsOn,
+          productCount: contest.productCount,
+          featuredLaunches: contest.featuredLaunchIds
+            .map((launchId) => state.launches.find((launch) => launch.id === launchId))
+            .filter((launch): launch is StoredLaunch => Boolean(launch))
+            .map((launch) => withViewerVote(launch, state))
+        }))
       };
     },
 
@@ -461,11 +603,11 @@ export function createKickService(): KickService {
           appealPoints: [
             `${primaryFeature}을 바로 시연할 수 있습니다.`,
             "대상 사용자와 문제를 한 화면에서 설명할 수 있습니다.",
-            "등록 payload까지 이어져 제작자 플로우가 끊기지 않습니다."
+            "등록 후보까지 이어져 제작자 플로우가 끊기지 않습니다."
           ],
           targetAnalysis: targetUsers.length > 0 ? targetUsers : ["대상 사용자 구체화 필요"],
           sellingPoints: features.slice(0, 3).map((feature) => `${feature}을 사용자 결과 중심으로 보여줍니다.`),
-          differentiators: ["런칭 문구와 제출 payload를 함께 준비합니다."],
+          differentiators: ["런칭 문구와 제출 후보를 함께 준비합니다."],
           risksOrUnknowns: followUpQuestions.length > 0 ? ["입력 정보가 부족해 일부 문구는 보수적으로 작성했습니다."] : [],
           tagline,
           description,
@@ -487,7 +629,7 @@ export function createKickService(): KickService {
             description,
             websiteUrl,
             tags,
-            makerNote: "제작자 런칭 보조 결과로 생성된 MVP 제출 후보입니다."
+            makerNote: "제작자 런칭 보조 결과로 생성된 제출 후보입니다."
           },
           followUpQuestions
         }
@@ -499,7 +641,7 @@ export function createKickService(): KickService {
       const invalidFields: string[] = [];
       const viewerId = collectRequiredText(body, "viewerId", invalidFields);
       const payload = collectSubmissionPayload(body.payload, invalidFields);
-      throwIfInvalidFields(invalidFields, "제출 payload를 확인해주세요.");
+      throwIfInvalidFields(invalidFields, "제출 내용을 확인해주세요.");
 
       const submission: MakerSubmission = {
         id: `submission_${state.submissions.length + 1}`,
@@ -536,7 +678,9 @@ function withViewerVote(launch: StoredLaunch, state: KickState, viewerId?: strin
       tags: [...launch.product.tags],
       targetUsers: [...launch.product.targetUsers],
       useCases: [...launch.product.useCases],
-      gallery: [...launch.product.gallery]
+      gallery: [...launch.product.gallery],
+      cardNewsCopy: [...launch.product.cardNewsCopy],
+      targetMessages: launch.product.targetMessages.map((targetMessage) => ({ ...targetMessage }))
     },
     isVotedByViewer: viewerId ? state.votes.get(launch.id)?.has(viewerId) ?? false : false
   };

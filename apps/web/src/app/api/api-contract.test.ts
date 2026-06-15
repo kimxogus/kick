@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { GET as getWeeklyBoard } from "./boards/weekly/route";
+import { GET as getContests } from "./contests/route";
 import { POST as createLaunchAssist } from "./maker/launch-assist/route";
 import { GET as getMakerSubmission } from "./maker/submissions/[id]/route";
 import { POST as createMakerSubmission } from "./maker/submissions/route";
@@ -28,7 +29,18 @@ describe("kick MVP API route handlers", () => {
 
     expect(response.status).toBe(200);
     expect(body.product.slug).toBe("cursor");
+    expect(body.product.kickPoint).toContain("코드");
+    expect(body.product.cardNewsCopy.length).toBeGreaterThanOrEqual(3);
     expect(body.relatedLaunches.length).toBeGreaterThan(0);
+  });
+
+  it("GET /api/contests는 공개 contest 목록을 반환한다", async () => {
+    const response = await getContests(new Request("http://localhost/api/contests"));
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.contests.length).toBeGreaterThanOrEqual(2);
+    expect(body.contests[0].featuredLaunches.length).toBeGreaterThan(0);
   });
 
   it("POST /api/votes는 vote 상태를 toggle한다", async () => {

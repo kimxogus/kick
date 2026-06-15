@@ -36,15 +36,17 @@ Next.js 앱은 `apps/web/`에 생성한다. MCP 서버는 MVP 앱 구현 이후 
 ### 포함
 
 - 탐색자용 Weekly board, 검색/필터, Product 소개 페이지, vote, newsletter UI
+- 공개 contest 읽기 전용 목록
 - 제작자용 제품 분석, 타겟 분석, 셀링 포인트, 피드백, 홍보 산출물 생성
-- kick 등록 payload 준비 또는 제출 후보
-- 실제 서비스 기반 seed 데이터
+- kick 등록 후보 저장과 preview
+- 실제 서비스 기반 초기 콘텐츠
 
 ### 제외
 
 - 운영자 큐레이션 화면
 - AI Slop 자동 필터링 백엔드
 - 관리자 승인/검수 워크플로
+- contest 생성/상금 등록/결제/운영 기능
 - 실제 newsletter 발송
 - 결제/후원
 
@@ -56,7 +58,7 @@ Next.js 앱은 `apps/web/`에 생성한다. MCP 서버는 MVP 앱 구현 이후 
 - Launch: 특정 board 또는 contest에 제출된 제품 노출 단위
 - Vote: 사용자의 투표
 - Tag: 검색과 분류를 위한 태그
-- Contest: 공개/비공개 행사 단위 경쟁, 제품 표현은 kick contest
+- Contest: 공개/비공개 행사 단위 경쟁. MVP에서는 읽기 전용 read model만 사용한다.
 - PromotionDraft: AI가 생성한 소개글, 카드뉴스 문구, 홍보 카피 초안
 - NewsletterSubscription: newsletter UI를 통해 수집하는 구독 의사
 - SeedProduct: MVP 시연을 위해 준비한 실제 서비스 기반 초기 콘텐츠
@@ -111,6 +113,18 @@ product_tags
 - product_id
 - tag_id
 
+contests
+- id
+- slug
+- title
+- host
+- description
+- status
+- starts_on
+- ends_on
+- launch_ids
+- created_at
+
 promotion_drafts
 - id
 - product_id
@@ -130,7 +144,7 @@ newsletter_subscriptions
 - created_at
 ```
 
-MVP 구현 계약은 [docs/contracts/mvp-data-and-api-contract.md](docs/contracts/mvp-data-and-api-contract.md)를 기준으로 한다. contest 범위와 장기 DB schema는 후속 ADR 전까지 고정하지 않는다.
+MVP 구현 계약은 [docs/contracts/mvp-data-and-api-contract.md](docs/contracts/mvp-data-and-api-contract.md)를 기준으로 한다. contest 생성/운영 범위와 장기 DB schema는 후속 ADR 전까지 고정하지 않는다.
 
 ## MVP 실행 및 배포 전략
 
@@ -158,7 +172,7 @@ MVP 실행과 배포는 [docs/adr/0003-application-stack-selection.md](docs/adr/
 
 ### Storage 선택 원칙
 
-- seed 데이터와 임시 presentation state에는 D1/R2를 요청하지 않는다.
+- 초기 콘텐츠와 임시 presentation state에는 D1/R2를 요청하지 않는다.
 - 제품 데이터가 방문 사이에 유지되어야 하면 D1을 검토한다.
 - 이미지, 문서, 영상 업로드가 필요하면 R2를 검토한다.
 - 업로드 파일과 검색 가능한 metadata가 모두 필요하면 D1과 R2를 함께 검토한다.
@@ -169,7 +183,7 @@ MVP 실행과 배포는 [docs/adr/0003-application-stack-selection.md](docs/adr/
 
 - `apps/web/src/app/`: Next.js App Router 화면과 API route
 - `apps/web/src/app/api/`: route handler 기반 MVP backend/API
-- `apps/web/src/server/`: seed fixture, 메모리 저장소, 제품/board/vote/newsletter/제작자 등록 서비스 로직
+- `apps/web/src/server/`: fixture, 메모리 저장소, 제품/board/vote/newsletter/제작자 등록/contest 서비스 로직
 - `apps/web/src/components/`: UI 컴포넌트
 - `apps/web/src/lib/`: local viewer ID와 제출 preview 저장 등 클라이언트 유틸리티
 - `apps/web/src/test/`: Vitest 테스트 setup
@@ -195,9 +209,9 @@ UI 구현 계약은 [docs/contracts/mvp-ui-contract.md](docs/contracts/mvp-ui-co
 - [x] fallback localhost 실행 명령 문서화
 - [x] MVP Auth 정책: local `viewer_id`
 - [x] MVP Weekly vote 정책: viewer/launch toggle
-- [x] MVP Search 구현 방식: seed 데이터 필터링
+- [x] MVP Search 구현 방식: 초기 콘텐츠 필터링
+- [x] MVP contest 범위: 읽기 전용 read model과 사용자 화면
 - [ ] 제작자 런칭 보조 MCP 범위 ADR 확정
 - [ ] Skill 이름 변경 여부 결정
-- [ ] kick contest 데이터 모델 포함 여부 결정
 - [ ] 운영자 큐레이션 백엔드와 AI Slop 필터링 ADR 작성
 - [ ] 결제/후원 포함 여부 ADR 작성

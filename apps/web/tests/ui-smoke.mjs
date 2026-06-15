@@ -20,7 +20,9 @@ async function isVisible(locator, timeout = 3000) {
 }
 
 await page.goto(baseUrl, { waitUntil: "networkidle" });
+record("home shows launch hero", await isVisible(page.getByRole("heading", { name: /agent에게 말 한마디로/ })));
 record("home shows weekly board", await isVisible(page.getByText("이번 주 눈여겨볼 제품")));
+record("home shows Skill MCP step", await isVisible(page.getByText("Skill + MCP가 정리")));
 record("home shows Cursor card", await isVisible(page.getByRole("link", { name: "Cursor" })));
 record("home shows maker and comments", await isVisible(page.getByText("Anysphere")) && await isVisible(page.getByText("36 comments")));
 
@@ -51,9 +53,17 @@ await page.waitForURL("**/products/cursor");
 record("product detail route", page.url().endsWith("/products/cursor"));
 record("product detail heading visible", await page.getByRole("heading", { name: "Cursor" }).isVisible());
 record("product detail vote visible", await isVisible(page.getByRole("button", { name: "Cursor vote" })));
+record("product detail kick point visible", await isVisible(page.getByText("Kick Point")));
+record("product detail card news visible", await isVisible(page.getByRole("heading", { name: "카드뉴스" })));
 await page.getByPlaceholder("you@example.com").fill("detail@example.com");
 await page.getByRole("button", { name: "구독" }).click();
 record("product newsletter success", await isVisible(page.getByText("제품 업데이트 구독 의사를 저장했습니다.")));
+
+await page.goto(`${baseUrl}/contest`, { waitUntil: "networkidle" });
+record("contest page heading visible", await isVisible(page.getByRole("heading", { name: "공개 콘테스트" })));
+record("contest item visible", await isVisible(page.getByText("AI Workflow Challenge")));
+record("contest has product link", await isVisible(page.getByRole("link", { name: /Cursor/ })));
+record("contest has no creation button", (await page.getByRole("button").count()) === 0);
 
 await page.goto(baseUrl, { waitUntil: "networkidle" });
 await page.getByPlaceholder("you@example.com").fill("bad-email");

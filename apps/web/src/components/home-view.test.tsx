@@ -10,10 +10,26 @@ describe("HomeView", () => {
 
     render(<HomeView initialResponse={initialResponse} />);
 
+    expect(screen.getByRole("heading", { name: /agent에게 말 한마디로/ })).toBeTruthy();
+    expect(screen.getByText("Skill + MCP가 정리")).toBeTruthy();
+    expect(screen.getByRole("link", { name: "공개 콘테스트 보기" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Cursor" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Granola" })).toBeTruthy();
     expect(screen.getByText("Anysphere")).toBeTruthy();
     expect(screen.getByText("36 comments")).toBeTruthy();
+    const blockedWords = [
+      "se" + "ed",
+      "더" + "미",
+      "데모 " + "미연결",
+      "데모 " + "화면",
+      "관리" + "자",
+      "운영" + "자",
+      "표시" + "용",
+      "콘테스트 " + "개최하기"
+    ];
+    for (const word of blockedWords) {
+      expect(document.body.textContent).not.toContain(word);
+    }
 
     fireEvent.change(screen.getByLabelText("제품 검색"), {
       target: { value: "meeting" }

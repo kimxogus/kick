@@ -84,6 +84,23 @@ export function ProductDetailView({
         </div>
       </section>
 
+      <section className="kick-point">
+        <h2>Kick Point</h2>
+        <p>{detail.product.kickPoint}</p>
+      </section>
+
+      <section>
+        <h2>카드뉴스</h2>
+        <div className="cardnews-grid">
+          {detail.product.cardNewsCopy.map((copy, index) => (
+            <article className="cardnews-slide" key={copy}>
+              <span>{index + 1}</span>
+              <p>{copy}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section className="detail-grid">
         <article>
           <h2>소개</h2>
@@ -112,6 +129,18 @@ export function ProductDetailView({
           ))}
           <a href={detail.product.websiteUrl}>웹사이트</a>
         </article>
+      </section>
+
+      <section>
+        <h2>타겟별 홍보 메시지</h2>
+        <div className="target-message-grid">
+          {detail.product.targetMessages.map((targetMessage) => (
+            <article key={targetMessage.audience}>
+              <strong>{targetMessage.audience}</strong>
+              <p>{targetMessage.message}</p>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section>

@@ -10,8 +10,9 @@
 - 제품 상세 조회
 - 제품 검색과 태그 필터
 - 제품 vote
+- 공개 contest 읽기 전용 목록 조회
 - Newsletter 구독 의사 저장
-- 제작자 등록 payload 준비와 제출 후보 저장
+- 제작자 등록 후보 준비와 제출 후보 저장
 - 제작자 런칭 보조 분석 결과 표현
 
 제외:
@@ -22,6 +23,7 @@
 - 실제 newsletter 발송
 - 운영자 큐레이션 백엔드
 - 실제 공개 제출 승인 워크플로
+- contest 생성, 상금 등록, 결제, 운영 기능
 
 ## 공통 규칙
 
@@ -60,9 +62,21 @@ type Product = {
   tags: string[];
   targetUsers: string[];
   useCases: string[];
+  kickPoint: string;
+  cardNewsCopy: string[];
+  targetMessages: TargetMessage[];
   pricing?: string;
   status: "featured" | "published" | "draft";
   createdAt: string;
+};
+```
+
+### TargetMessage
+
+```ts
+type TargetMessage = {
+  audience: string;
+  message: string;
 };
 ```
 
@@ -102,6 +116,23 @@ type Launch = {
   isVotedByViewer: boolean;
   featuredReason: string;
   launchedAt: string;
+};
+```
+
+### Contest
+
+```ts
+type Contest = {
+  id: string;
+  slug: string;
+  title: string;
+  host: string;
+  description: string;
+  status: "open" | "upcoming" | "closed";
+  startsOn: string;
+  endsOn: string;
+  productCount: number;
+  featuredLaunches: Launch[];
 };
 ```
 
@@ -218,6 +249,23 @@ type ProductDetailResponse = {
 };
 ```
 
+### `GET /api/contests`
+
+공개 contest 목록을 읽기 전용으로 반환한다.
+
+성공 응답:
+
+```ts
+type ContestListResponse = {
+  contests: Contest[];
+};
+```
+
+정책:
+
+- MVP에서는 생성, 수정, 상금 등록, 결제, 관리자 운영 API를 제공하지 않는다.
+- 사용자 화면은 contest의 목적, 기간, 참여 제품 수, 대표 제품만 보여준다.
+
 ### `POST /api/votes`
 
 제품 launch에 vote를 토글한다.
@@ -293,13 +341,13 @@ type LaunchAssistResponse = {
 
 정책:
 
-- MVP에서는 규칙 기반 생성과 seed 예시를 사용해 데모 안정성을 우선한다.
+- MVP에서는 규칙 기반 생성과 예시 데이터를 사용해 데모 안정성을 우선한다.
 - 외부 URL 본문 수집은 하지 않는다.
 - 입력이 부족하면 `followUpQuestions`에 남긴다.
 
 ### `POST /api/maker/submissions`
 
-제작자 등록 payload를 제출 후보로 저장한다.
+제작자 등록 후보를 저장한다.
 
 요청:
 
@@ -323,7 +371,7 @@ type MakerSubmissionResponse = {
 정책:
 
 - MVP에서는 공개 board에 자동 반영하지 않는다.
-- 제출 성공 화면과 데모용 preview만 제공한다.
+- 제출 성공 화면과 preview만 제공한다.
 - UI는 제출 직후 preview 안정성을 위해 `submission` snapshot을 브라우저 localStorage에도 저장할 수 있다.
 
 ### `GET /api/maker/submissions/:id`
@@ -346,9 +394,11 @@ type MakerSubmissionDetailResponse = {
 
 ## API 테스트 기준
 
-- Weekly board는 seed launch를 rank 순서로 반환해야 한다.
+- Weekly board는 launch를 rank 순서로 반환해야 한다.
 - 검색어는 제품명, 한 줄 소개, 설명, 태그, 대상 사용자에 매칭되어야 한다.
 - 태그 필터는 해당 태그가 있는 launch만 반환해야 한다.
+- 제품 상세는 Kick Point, 카드뉴스 문구, 타겟별 메시지를 포함해야 한다.
+- contest 목록은 읽기 전용 데이터와 대표 launch를 반환해야 한다.
 - vote는 같은 viewer/launch 조합에서 toggle 되어야 한다.
 - newsletter는 잘못된 이메일을 거부해야 한다.
 - launch assist는 필수 입력 누락 시 follow-up question을 반환해야 한다.

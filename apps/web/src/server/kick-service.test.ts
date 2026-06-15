@@ -38,8 +38,20 @@ describe("kick MVP backend service", () => {
 
     expect(detail.product.name).toBe("Cursor");
     expect(detail.launch.product.slug).toBe("cursor");
+    expect(detail.product.kickPoint).toContain("코드");
+    expect(detail.product.cardNewsCopy.length).toBeGreaterThanOrEqual(3);
+    expect(detail.product.targetMessages[0]?.audience).toBeTruthy();
     expect(detail.relatedLaunches.length).toBeGreaterThan(0);
     expect(detail.relatedLaunches.every((launch) => launch.product.slug !== "cursor")).toBe(true);
+  });
+
+  it("공개 contest 목록을 읽기 전용 모델로 반환한다", () => {
+    const response = service.getContests();
+
+    expect(response.contests.length).toBeGreaterThanOrEqual(2);
+    expect(response.contests[0]?.title).toContain("AI");
+    expect(response.contests[0]?.featuredLaunches.length).toBeGreaterThan(0);
+    expect(response.contests[0]?.featuredLaunches[0]?.product.slug).toBeTruthy();
   });
 
   it("같은 viewer와 launch 조합에서 vote를 toggle한다", () => {

@@ -67,17 +67,46 @@ export function HomeView({ initialResponse, onVote = defaultVote }: HomeViewProp
 
   return (
     <main className="page-shell">
-      <section className="board-hero">
+      <section className="page-hero">
         <div>
           <p className="eyebrow">kick weekly</p>
-          <h1>이번 주 눈여겨볼 제품</h1>
+          <h1>agent에게 말 한마디로, 내 제품을 kick하세요</h1>
           <p className="hero-copy">
-            실제 서비스 기반 seed를 바탕으로 탐색자와 제작자 흐름을 함께 보여준다.
+            제품 설명, 타겟, 카드뉴스 문구, 홍보 카피를 정리해 탐색자가 바로 이해할 수 있는 런칭 페이지로 보여줍니다.
           </p>
         </div>
-        <a className="primary-link" href="/maker">
-          제작자 등록 보조
-        </a>
+        <div className="hero-actions">
+          <a className="primary-link" href="#weekly-board">
+            이번 주 둘러보기
+          </a>
+          <a className="secondary-link" href="/maker">
+            제작자 런칭 보조
+          </a>
+        </div>
+      </section>
+
+      <section className="step-grid" aria-label="작동 방식">
+        <article className="step-card">
+          <span className="step-icon" aria-hidden="true">
+            1
+          </span>
+          <h2>agent에게 요청</h2>
+          <p>제품명, URL, 문제와 기능을 전달하면 런칭 준비가 시작됩니다.</p>
+        </article>
+        <article className="step-card">
+          <span className="step-icon" aria-hidden="true">
+            2
+          </span>
+          <h2>Skill + MCP가 정리</h2>
+          <p>타겟 분석, 셀링 포인트, 피드백, 카드뉴스 문구와 홍보 카피를 만듭니다.</p>
+        </article>
+        <article className="step-card">
+          <span className="step-icon" aria-hidden="true">
+            3
+          </span>
+          <h2>제품을 런칭</h2>
+          <p>정리된 소개 페이지와 Weekly board를 통해 초기 반응을 확인합니다.</p>
+        </article>
       </section>
 
       <section className="toolbar" aria-label="board filters">
@@ -109,6 +138,19 @@ export function HomeView({ initialResponse, onVote = defaultVote }: HomeViewProp
             </button>
           ))}
         </div>
+      </section>
+
+      <section className="board-header" id="weekly-board">
+        <div>
+          <p className="eyebrow">weekly board</p>
+          <h2>이번 주 눈여겨볼 제품</h2>
+          <p>
+            {initialResponse.board.startsOn} - {initialResponse.board.endsOn}
+          </p>
+        </div>
+        <a className="secondary-link" href="/contest">
+          공개 콘테스트 보기
+        </a>
       </section>
 
       <section className="launch-list" aria-label={initialResponse.board.title}>
