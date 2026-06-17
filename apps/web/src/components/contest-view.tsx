@@ -18,16 +18,14 @@ export function ContestView({ initialResponse }: ContestViewProps) {
         <div>
           <p className="eyebrow">kick contest</p>
           <h1>공개 콘테스트</h1>
-          <p className="hero-copy">
-            같은 맥락의 제품을 한 번에 비교하며, 이번 주 주목할 제품과 다음 탐색 주제를 찾습니다.
-          </p>
+          <p className="hero-copy">누구나 주제를 걸고 콘테스트를 열 수 있어요. 상금 정보는 화면에만 표기됩니다.</p>
         </div>
         <div className="hero-actions">
-          <a className="primary-link" href="/">
-            Weekly board
+          <a className="primary-link" href="/week">
+            위클리보드
           </a>
-          <a className="secondary-link" href="/maker">
-            제작자 런칭 보조
+          <a className="secondary-link" href="/products">
+            제품 탐색
           </a>
         </div>
       </section>

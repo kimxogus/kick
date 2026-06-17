@@ -29,7 +29,7 @@ describe("ProductDetailView", () => {
     render(<ProductDetailView detail={detail} />);
 
     expect(screen.getByRole("heading", { name: "모먼토" })).toBeTruthy();
-    expect(screen.getByText("📓")).toBeTruthy();
+    expect(screen.getByRole("img", { name: "모먼토 비주얼" })).toBeTruthy();
     expect(screen.getAllByText("생산성").length).toBeGreaterThan(0);
     expect(screen.getByText("쓰지 않아도 쌓이는 일기 — 기록의 진입장벽을 없앤다.")).toBeTruthy();
     expect(screen.getByText("하루의 기록, 자동으로 완성")).toBeTruthy();

@@ -35,11 +35,11 @@ Next.js 앱은 `apps/web/`에 생성한다. MCP 서버는 MVP 앱 구현 이후 
 
 ### 포함
 
-- 탐색자용 Weekly board, 검색/필터, Product 소개 페이지, vote, newsletter UI
-- 공개 contest 읽기 전용 목록
-- 제작자용 제품 분석, 타겟 분석, 셀링 포인트, 피드백, 홍보 산출물 생성
-- kick 등록 후보 저장과 preview
+- 탐색자용 Home 허브(`/`), Weeklyboard(`/week`), 제품 탐색/검색(`/products`), Product 소개 페이지(`/products/[slug]`), vote, newsletter UI
+- 공개 contest 읽기 전용 목록(`/contest`)
+- 제작자용 제품 분석, 타겟 분석, 셀링 포인트, 피드백, 홍보 산출물 생성 (Skill/MCP가 수행하며 별도 web 등록/제출 화면은 두지 않는다)
 - 실제 서비스 기반 초기 콘텐츠
+- 발표용 seed reset(`/admin`, direct URL 전용)
 - main 샘플 HTML에서 검증한 제품/contest 콘텐츠를 사용자용 fixture로 정리한 초기 콘텐츠
 
 ### 제외

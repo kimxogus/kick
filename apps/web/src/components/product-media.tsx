@@ -5,14 +5,25 @@ type ProductMediaProps = {
   className: string;
 };
 
+// 제품 비주얼: emoji가 있으면 emoji 썸네일, 없으면 brand 썸네일 이미지.
 export function ProductMedia({ product, className }: ProductMediaProps) {
   if (product.emoji) {
     return (
-      <div aria-label={`${product.name} icon`} className={`${className} product-emoji-visual`} role="img">
-        {product.emoji}
+      <div
+        aria-label={`${product.name} 비주얼`}
+        className={`${className} product-media product-emoji-visual`}
+        role="img"
+      >
+        <span aria-hidden="true">{product.emoji}</span>
       </div>
     );
   }
 
-  return <img alt="" className={className} src={product.thumbnailUrl} />;
+  return (
+    <img
+      alt={`${product.name} 비주얼`}
+      className={`${className} product-media`}
+      src={product.thumbnailUrl}
+    />
+  );
 }
