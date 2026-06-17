@@ -43,7 +43,7 @@ export function HomeView({ highlights, contestSummary }: HomeViewProps) {
         <div>
           <p className="hero-kicker">AGENT-NATIVE PRODUCT LAUNCH</p>
           <h1 className="hero-headline">
-            agent에게 말 한마디로
+            kick에게 말 한마디로
             <br />
             <span className="muted">제품을 런칭하다</span>
           </h1>
@@ -68,21 +68,21 @@ export function HomeView({ highlights, contestSummary }: HomeViewProps) {
         </p>
         <article className="step-card">
           <span className="step-num" aria-hidden="true">
-            01<span> / 03</span>
+            First
           </span>
           <h2>말합니다</h2>
           <p>agent에게 한마디면 충분해요.</p>
         </article>
         <article className="step-card">
           <span className="step-num" aria-hidden="true">
-            02<span> / 03</span>
+            Second
           </span>
           <h2>에이전트가 만듭니다</h2>
           <p>소개글·카테고리·카드뉴스·홍보 카피·타겟까지 자동으로.</p>
         </article>
         <article className="step-card">
           <span className="step-num" aria-hidden="true">
-            03<span> / 03</span>
+            Third
           </span>
           <h2>바로 런칭됩니다</h2>
           <p>일정한 품질의 런칭 페이지가 만들어져 즉시 노출돼요.</p>

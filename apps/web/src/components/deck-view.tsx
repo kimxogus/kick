@@ -51,9 +51,9 @@ const SLIDES: Slide[] = [
     headline: "“올려줘”\n한마디면 끝",
     lead: "웹 앱 런칭부터 초기 반응까지 한 흐름.",
     points: [
-      "런칭 페이지 · 카드뉴스 · 홍보 카피 · 타겟 분석을 한 번에",
-      "올라온 뒤엔 board vote로 초기 반응까지 회수",
-      "수동 폼 작성은 끝 — agent가 채운다"
+      "런칭 페이지 · 카드뉴스 · 타겟별 홍보 메시지",
+      "위클리보드에서 좋아요로 반응을 확인하고, 제품의 피드백까지 전달받는다",
+      "귀찮은 홍보 준비, “올려줘” 한마디면 agent가 대신 끝낸다"
     ],
     bg: "#cdd8f7",
     ink: "#1b2b54",
@@ -63,39 +63,22 @@ const SLIDES: Slide[] = [
     kicker: "Demo · 라이브",
     headline: "지금,\nagent에게 말합니다",
     lead: "“이 제품 kick에 올려줘”",
-    points: [
-      "산출물이 쏟아진다: 런칭 페이지 · 카드뉴스 · 카피",
-      "강점과 약점을 데이터 근거로 함께 분석",
-      "→ 화면 전환: 라이브 데모"
-    ],
     bg: "#cfe3cf",
     ink: "#1f4329",
     accent: "#1f4329"
   },
   {
-    kicker: "Loop · 탐색",
-    headline: "올린 뒤에도\n계속 이어진다",
-    lead: "제작자 루프와 탐색자 루프가 한 앱에서 맞물린다.",
+    kicker: "Flow · 지속",
+    headline: "한 번 올리고\n끝이 아니다",
+    lead: "뷰어와 제작자가 계속 맞물려 돌아간다.",
     points: [
-      "Weekly board · vote로 관심 서비스 발견",
-      "newsletter로 찜한 서비스 업데이트 구독",
-      "반응이 다음 제작자의 피드백으로"
+      "위클리보드에서 좋아요로 관심 서비스를 만난다",
+      "뉴스레터로 이번 주 트렌드를 놓치지 않는다",
+      "뷰어의 반응이 다음 제작자의 피드백으로 이어진다"
     ],
     bg: "#bfe8dd",
     ink: "#0f4a3c",
     accent: "#0f4a3c"
-  },
-  {
-    kicker: "Edge · 차별점",
-    headline: "PH는 폼을 채우게 하고,\nkick은 agent가 채운다",
-    points: [
-      "Product Hunt · Disquiet: 수동 작성, 품질 편차",
-      "kick: Skill/MCP가 등록 준비 + 데이터 근거 분석",
-      "소스 단계에서 일정한 소개 품질을 유도"
-    ],
-    bg: "#c9a8f0",
-    ink: "#33215e",
-    accent: "#33215e"
   },
   {
     kicker: "If · 비전",
