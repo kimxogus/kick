@@ -63,8 +63,8 @@ export function ProductDetailView({
 
   return (
     <main className="page-shell detail-shell">
-      <a className="back-link" href="/">
-        Weekly board
+      <a className="back-link" href="/week">
+        위클리보드
       </a>
       <section className="product-hero">
         <ProductMedia className="product-visual" product={detail.product} />
@@ -80,8 +80,10 @@ export function ProductDetailView({
             type="button"
             onClick={() => void handleVote()}
           >
+            <span className="heart" aria-hidden="true">
+              ♥
+            </span>
             <span>{launch.voteCount}</span>
-            <small>vote</small>
           </button>
         </div>
       </section>
