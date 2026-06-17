@@ -30,9 +30,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <a href="/week">위클리보드</a>
             <a href="/products">탐색</a>
             <a href="/contest">콘테스트</a>
-            <a className="header-cta" href="/products">
-              제품 둘러보기
-            </a>
           </nav>
         </header>
         {children}
