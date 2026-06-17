@@ -1,0 +1,11 @@
+{
+  "name": "kick",
+  "version": "0.1.0",
+  "description": "kick 제품 등록과 상세 페이지 생성을 돕는 plugin",
+  "author": {
+    "name": "kimxogus"
+  },
+  "homepage": "https://github.com/kimxogus/kick",
+  "repository": "https://github.com/kimxogus/kick",
+  "keywords": ["kick", "product-launch", "agent-skill"]
+}

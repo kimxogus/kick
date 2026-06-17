@@ -12,6 +12,7 @@ type HomeViewProps = {
 };
 
 const SKILL_PROMPT = "kick 스킬을 참고해서 내 제품 올려줘";
+const README_URL = "https://github.com/kimxogus/kick#readme";
 
 export function HomeView({ highlights, contestSummary }: HomeViewProps) {
   const [newsletterEmail, setNewsletterEmail] = useState("");
@@ -22,7 +23,7 @@ export function HomeView({ highlights, contestSummary }: HomeViewProps) {
     event.preventDefault();
     const response = await fetch("/api/newsletter-subscriptions", {
       method: "POST",
-      body: JSON.stringify({ email: newsletterEmail, source: "home" })
+      body: JSON.stringify({ email: newsletterEmail, source: "board" })
     });
     setNewsletterState(response.ok ? "success" : "error");
   }
@@ -89,17 +90,29 @@ export function HomeView({ highlights, contestSummary }: HomeViewProps) {
         </article>
       </section>
 
-      <section className="skill-callout" aria-label="스킬 사용 예시">
-        <code className="skill-callout__text">{SKILL_PROMPT}</code>
-        <button
-          className="skill-callout__copy"
-          type="button"
-          onClick={() => void handleCopy()}
-          aria-label="스킬 문구 복사"
-        >
-          {copied ? "복사됨" : "복사"}
-        </button>
-      </section>
+      <div className="skill-guide" aria-label="스킬 등록 안내">
+        <section className="skill-setup-callout" aria-label="plugin 설치 안내">
+          <div>
+            <strong>GitHub repo에서 kick plugin 설치 방법 확인</strong>
+            <p>Codex와 Claude Code에 kick plugin을 설치한 뒤 아래 문구로 제품 등록을 요청합니다.</p>
+          </div>
+          <a className="skill-setup-callout__link" href={README_URL}>
+            README에서 설치 방법 보기
+          </a>
+        </section>
+
+        <section className="skill-callout" aria-label="스킬 사용 예시">
+          <code className="skill-callout__text">{SKILL_PROMPT}</code>
+          <button
+            className="skill-callout__copy"
+            type="button"
+            onClick={() => void handleCopy()}
+            aria-label="스킬 문구 복사"
+          >
+            {copied ? "복사됨" : "복사"}
+          </button>
+        </section>
+      </div>
 
       <section className="board-header" aria-label="이번 주 주목받는 제품">
         <div>

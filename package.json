@@ -11,6 +11,8 @@
     "test:coverage": "npm run test:coverage -w apps/web",
     "test:run": "npm run test:run -w apps/web",
     "lint": "npm run lint -w apps/web",
+    "plugin:sync:kick": "node scripts/sync-kick-plugin.mjs",
+    "plugin:check:kick": "node scripts/check-kick-plugin.mjs",
     "typecheck": "npm run typecheck -w apps/web"
   }
 }

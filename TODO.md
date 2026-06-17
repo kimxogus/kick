@@ -32,6 +32,10 @@
 - [ ] 발표 전 `npm run db:reset -w apps/web` 또는 `/admin`으로 seed 상태를 복원한다.
 - [ ] 이미지/카드뉴스 생성·저장 방식을 결정한다.
 - [ ] Skill→MCP 전환 시 서버 API 스펙을 정의한다.
+- [ ] 공개 제품 등록 API의 인증, 승인, rate limit 정책을 결정한다.
+- [ ] 중복 제품 제출 방지와 idempotency key 도입 여부를 결정한다.
+- [ ] 잘못 등록된 제품의 관리자 삭제/수정 경로를 설계한다.
+- [ ] 제품 등록 감사 로그와 운영 모니터링 범위를 정의한다.
 - [ ] 운영자 큐레이션 백엔드와 AI Slop 필터링 후속 ADR을 작성한다.
 - [ ] 발표 전 여유가 있을 경우 로컬 Skill 분석/등록 로직의 backend mirror 범위를 검토한다.
 
@@ -75,6 +79,9 @@
 - [ ] `product-kick` Skill 이름을 `kick-launch-assistant`로 변경할지 결정한다.
 - [ ] 제작자 런칭 보조 Skill을 실제 제품 등록 사례로 테스트한다.
 - [ ] 등록 Skill을 런칭 페이지·카드뉴스·카피 생성 흐름에 맞게 확장한다.
+- [ ] `kick` plugin release 시 manifest version bump와 CHANGELOG 갱신을 자동 검증에 포함할지 결정한다.
+- [ ] GitHub repo `kimxogus/kick` 기준 Codex plugin 설치를 실제 사용자 환경에서 검증한다.
+- [ ] Claude CLI가 설치된 환경에서 `claude plugin validate ./plugins/kick`와 `claude --plugin-dir ./plugins/kick`를 검증한다.
 - [ ] MCP tool 계약을 팀과 검토한다.
 - [ ] MCP 서버 구현 여부와 범위를 ADR로 결정한다.
 - [ ] Codex/Claude 설정 검증 방법을 README에 반영한다.

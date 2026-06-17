@@ -67,6 +67,67 @@ npm run smoke:ui -w apps/web
 
 개발 중 빠른 확인에는 `npm run dev -w apps/web -- --port 3000`을 사용할 수 있지만, 발표 fallback 검증은 `build`와 `start` 기준으로 기록합니다.
 
+## Plugin 설치 및 제품 등록
+
+사용자는 GitHub repo `kimxogus/kick`를 plugin source로 추가한 뒤 `kick` plugin을 설치합니다.
+
+Codex:
+
+```bash
+codex plugin marketplace add kimxogus/kick
+codex plugin add kick@kick
+```
+
+Claude Code:
+
+```text
+/plugin marketplace add kimxogus/kick
+/plugin install kick@kick
+/reload-plugins
+```
+
+Claude Code catalog는 repo-relative source(`./plugins/kick`)를 사용하므로 GitHub repo 방식으로 추가합니다. raw `marketplace.json` URL 방식은 plugin 파일 위치를 해석하지 못할 수 있어 지원하지 않습니다.
+
+제품을 등록할 때는 agent에게 아래처럼 요청합니다. Claude Code에서는 `/kick:kick`로 plugin skill을 직접 실행할 수도 있습니다.
+
+```text
+kick 스킬을 참고해서 내 제품 올려줘
+```
+
+Plugin은 저장소 문서를 읽어 제품 소개, 카테고리, 카드뉴스 문구, 타겟별 메시지를 만들고 공식 서비스에 등록합니다.
+
+repo-local 개발자는 기존처럼 `skills/kick/` 원본과 `.agents/skills/kick`, `.claude/skills/kick` symlink를 사용합니다. 배포용 plugin 복사본은 `plugins/kick/`에 있으며 아래 명령으로 동기화와 검증을 수행합니다.
+
+```bash
+npm run plugin:sync:kick
+npm run plugin:check:kick
+```
+
+Plugin 변경을 배포할 때는 `plugins/kick/.codex-plugin/plugin.json`, `plugins/kick/.claude-plugin/plugin.json`의 `version`과 `plugins/kick/CHANGELOG.md`를 함께 갱신합니다. Claude Code catalog entry에는 별도 `version`을 두지 않아 manifest version과 충돌하지 않게 합니다.
+
+```bash
+curl -s -X POST https://kick-web-ebon.vercel.app/api/products \
+  -H 'content-type: application/json' \
+  -d '{
+    "name": "DemoFlow",
+    "emoji": "🚀",
+    "category": "생산성",
+    "tagline": "시연 준비를 한 흐름으로 정리하는 도구",
+    "description": "DemoFlow는 제품 시연을 준비하는 팀이 핵심 메시지와 체크리스트를 한곳에서 정리하도록 돕습니다.",
+    "kickPoint": "흩어진 시연 준비를 한 페이지로 모아 바로 공유합니다.",
+    "tags": ["AI", "Productivity"],
+    "targetUsers": ["초기 제품팀"],
+    "useCases": ["데모 스크립트 정리"],
+    "cardNewsCopy": ["시연 흐름을 한눈에", "체크리스트로 누락 없이", "팀과 바로 공유"],
+    "targetMessages": [
+      { "audience": "초기 제품팀", "message": "시연 전 핵심 메시지를 빠르게 맞춥니다." }
+    ],
+    "maker": { "name": "Demo Team" }
+  }'
+```
+
+응답의 `detailUrl`이 `/products/<slug>`이면 최종 상세 페이지는 `https://kick-web-ebon.vercel.app/products/<slug>`입니다. 공식 URL에 실제 테스트 제품을 등록하면 배포 DB에 데이터가 남을 수 있으므로, 개발 검증은 자동화 테스트와 로컬 환경에서 수행합니다.
+
 후순위 기능:
 
 - Daily, Monthly, Yearly board

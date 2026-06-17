@@ -1,0 +1,21 @@
+{
+  "name": "kick",
+  "owner": {
+    "name": "kimxogus"
+  },
+  "description": "kick GitHub repo 기반 Claude Code plugin catalog",
+  "plugins": [
+    {
+      "name": "kick",
+      "source": "./plugins/kick",
+      "description": "kick 제품 등록과 상세 페이지 생성을 돕는 plugin",
+      "author": {
+        "name": "kimxogus"
+      },
+      "homepage": "https://github.com/kimxogus/kick",
+      "repository": "https://github.com/kimxogus/kick",
+      "category": "Productivity",
+      "tags": ["kick", "product-launch", "agent-skill"]
+    }
+  ]
+}

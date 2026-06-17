@@ -3,15 +3,16 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import {
-  KickServiceError,
+  createRegisteredLaunch,
+  nextLaunchRank,
   seedLaunches,
   type Launch,
-  type Maker,
-  type Product,
+  type KickService,
   type ProductDetailResponse,
   type ProductRegistrationInput,
   type ProductRegistrationResponse,
-  type StoredLaunch
+  type StoredLaunch,
+  toProductRegistrationResponse
 } from "./kick-service";
 
 // product-kick Skill이 등록한 제품을 보관하는 파일 백업 store.
@@ -44,73 +45,11 @@ export function clearRegisteredStore(): void {
 }
 
 export function registerProduct(input: ProductRegistrationInput): ProductRegistrationResponse {
-  const name = input?.name?.trim();
-  const missing: string[] = [];
-  if (!name) {
-    missing.push("name");
-  }
-  for (const field of ["category", "tagline", "description", "kickPoint"] as const) {
-    if (!input?.[field]?.trim()) {
-      missing.push(field);
-    }
-  }
-  if (missing.length > 0) {
-    throw new KickServiceError("VALIDATION_ERROR", "제품 등록 정보를 확인해주세요.", missing);
-  }
-
   const existing = readAll();
-  const slug = ensureUniqueSlug(slugify(name as string), existing);
-  const now = new Date().toISOString();
-  const maker: Maker | undefined = input.maker?.name?.trim()
-    ? {
-        id: `maker_${slug}`,
-        name: input.maker.name.trim(),
-        role: input.maker.role,
-        profileUrl: input.maker.profileUrl
-      }
-    : undefined;
-
-  const product: Product = {
-    id: `product_${slug}`,
-    slug,
-    name: name as string,
-    tagline: input.tagline.trim(),
-    category: input.category.trim(),
-    emoji: input.emoji?.trim() || undefined,
-    description: input.description.trim(),
-    websiteUrl: maker?.profileUrl ?? "#",
-    thumbnailUrl: "",
-    gallery: [],
-    makers: maker ? [maker] : [],
-    tags: dedupe(input.tags),
-    targetUsers: dedupe(input.targetUsers),
-    useCases: dedupe(input.useCases),
-    kickPoint: input.kickPoint.trim(),
-    cardNewsCopy: (input.cardNewsCopy ?? []).map((copy) => copy.trim()).filter(Boolean),
-    targetMessages: (input.targetMessages ?? []).filter(
-      (message) => message?.audience?.trim() && message?.message?.trim()
-    ),
-    status: "published",
-    createdAt: now
-  };
-
-  const storedLaunch: StoredLaunch = {
-    id: `launch_${slug}`,
-    rank: seedLaunches.length + existing.length + 1,
-    product,
-    voteCount: 0,
-    commentCount: 0,
-    featuredReason: "",
-    launchedAt: now
-  };
-
+  const allLaunches = [...seedLaunches, ...existing];
+  const storedLaunch = createRegisteredLaunch(input, allLaunches, nextLaunchRank(allLaunches));
   writeAll([...existing, storedLaunch]);
-
-  return {
-    product,
-    launch: { ...storedLaunch, isVotedByViewer: false },
-    detailUrl: `/products/${slug}`
-  };
+  return toProductRegistrationResponse(storedLaunch);
 }
 
 export function findRegisteredDetail(slug: string): ProductDetailResponse | null {
@@ -129,31 +68,28 @@ export function findRegisteredDetail(slug: string): ProductDetailResponse | null
   };
 }
 
-function dedupe(values: string[] | undefined): string[] {
-  return [...new Set((values ?? []).map((value) => value.trim()).filter(Boolean))];
-}
-
-function slugify(name: string): string {
-  return (
-    name
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9가-힣]+/g, "-")
-      .replace(/^-+|-+$/g, "") || "product"
-  );
-}
-
-function ensureUniqueSlug(base: string, registered: StoredLaunch[]): string {
-  const used = new Set([
-    ...seedLaunches.map((launch) => launch.product.slug),
-    ...registered.map((launch) => launch.product.slug)
-  ]);
-  if (!used.has(base)) {
-    return base;
-  }
-  let suffix = 2;
-  while (used.has(`${base}-${suffix}`)) {
-    suffix += 1;
-  }
-  return `${base}-${suffix}`;
+export function createRegisteredStoreKickService(baseService: KickService): KickService {
+  return {
+    ...baseService,
+    async getProductDetail(slug, viewerId) {
+      try {
+        return await baseService.getProductDetail(slug, viewerId);
+      } catch (error) {
+        if ((error as { code?: string })?.code === "NOT_FOUND") {
+          const registered = findRegisteredDetail(slug);
+          if (registered) {
+            return registered;
+          }
+        }
+        throw error;
+      }
+    },
+    async registerProduct(input) {
+      return registerProduct(input);
+    },
+    async resetToSeed() {
+      clearRegisteredStore();
+      return baseService.resetToSeed();
+    }
+  };
 }

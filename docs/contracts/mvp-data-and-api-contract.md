@@ -8,6 +8,7 @@
 
 - Weekly board 제품 목록 조회
 - 제품 상세 조회
+- Skill 기반 제품 즉시 등록
 - 제품 검색과 태그 필터
 - 제품 vote
 - 공개 contest 읽기 전용 목록 조회
@@ -92,6 +93,35 @@ type Maker = {
   name: string;
   role?: string;
   profileUrl?: string;
+};
+```
+
+### ProductRegistrationInput
+
+```ts
+type ProductRegistrationInput = {
+  name: string;
+  emoji?: string;
+  category: string;
+  tagline: string;
+  description: string;
+  kickPoint: string;
+  tags: string[];
+  targetUsers: string[];
+  useCases: string[];
+  cardNewsCopy: string[];
+  targetMessages: TargetMessage[];
+  maker?: { name: string; role?: string; profileUrl?: string };
+};
+```
+
+### ProductRegistrationResponse
+
+```ts
+type ProductRegistrationResponse = {
+  product: Product;
+  launch: Launch;
+  detailUrl: string;
 };
 ```
 
@@ -252,6 +282,44 @@ type ProductDetailResponse = {
   relatedLaunches: Launch[];
 };
 ```
+
+### `POST /api/products`
+
+Skill이 생성한 제품 상세 페이지 payload를 공식 board에 즉시 등록한다.
+
+요청:
+
+```ts
+type ProductRegistrationRequest = ProductRegistrationInput;
+```
+
+필수 필드:
+
+- `name`
+- `category`
+- `tagline`
+- `description`
+- `kickPoint`
+
+성공 응답:
+
+```ts
+type ProductRegistrationResponse = {
+  product: Product;
+  launch: Launch;
+  detailUrl: string;
+};
+```
+
+정책:
+
+- MVP Skill 등록은 별도 승인 없이 즉시 공개한다.
+- `DATABASE_URL`이 있으면 `products`와 `launches`에 Postgres row를 저장한다.
+- `DATABASE_URL`이 없으면 Next.js dev worker 분리 문제를 피하기 위해 파일 기반 fallback store에 등록한다.
+- 등록된 launch는 `base_vote_count=0`, `comment_count=0`, `featured_reason=""`으로 시작한다.
+- `detailUrl`은 `/products/<slug>` 형식의 상대 경로를 반환한다.
+- `maker.profileUrl`은 메이커 프로필 링크이며 제품 `websiteUrl` 대체값으로 쓰지 않는다.
+- 인증, 관리자 승인, 삭제/수정 API, rate limit, 감사 로그는 후속 개선 범위로 남긴다.
 
 ### `GET /api/contests`
 
