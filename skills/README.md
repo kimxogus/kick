@@ -1,6 +1,6 @@
 # skills
 
-이 디렉터리는 Codex와 Claude Code가 함께 사용하는 repo-local Skill 원본을 관리한다.
+이 디렉터리는 Codex와 Claude Code가 함께 사용하는 repo-local Skill 원본을 관리한다. 외부 사용자 배포용 plugin은 `plugins/`에서 관리한다.
 
 ## 구조
 
@@ -44,6 +44,30 @@ readlink .claude/skills/kick
 ```text
 ../../skills/kick
 ../../skills/kick
+```
+
+## Plugin 배포
+
+`kick` Skill의 배포용 plugin 복사본은 `plugins/kick/skills/kick/`에 둔다. 사용자는 GitHub repo `kimxogus/kick`를 plugin source로 추가해 설치한다.
+
+```bash
+codex plugin marketplace add kimxogus/kick
+codex plugin add kick@kick
+```
+
+```text
+/plugin marketplace add kimxogus/kick
+/plugin install kick@kick
+/reload-plugins
+```
+
+Claude Code catalog는 repo-relative source(`./plugins/kick`)를 사용하므로 GitHub repo 방식으로 추가한다. raw `marketplace.json` URL 방식은 지원하지 않는다.
+
+원본을 수정한 뒤에는 배포 복사본 drift를 방지하기 위해 아래 명령을 실행한다.
+
+```bash
+npm run plugin:sync:kick
+npm run plugin:check:kick
 ```
 
 ## 새 Skill 추가 절차

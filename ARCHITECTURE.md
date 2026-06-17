@@ -163,7 +163,7 @@ MVP 실행과 배포는 [docs/adr/0007-vercel-neon-postgres-persistence.md](docs
    - `DATABASE_URL`이 없으면 memory store로 동작해 로컬 개발과 테스트를 유지한다.
 3. 로컬 fallback 필수
    - Vercel 또는 Neon 설정이 막히면 localhost 실행으로 시연한다.
-   - fallback 실행 명령은 `README.md`의 로컬 실행 섹션에 기록한다.
+   - fallback 실행 명령은 `DEVELOPMENT.md`의 로컬 실행 섹션에 기록한다.
 
 ### Storage 선택 원칙
 

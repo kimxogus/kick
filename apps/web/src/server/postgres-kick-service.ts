@@ -3,8 +3,10 @@ import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
 import {
   boardBase,
   contestFixtures,
+  createRegisteredLaunch,
   createKickService,
   createResetResponse,
+  nextLaunchRank,
   type AdminResetResponse,
   type ContestListResponse,
   type KickService,
@@ -22,6 +24,8 @@ import {
   type NewsletterSubscription,
   type Product,
   type ProductDetailResponse,
+  type ProductRegistrationInput,
+  type ProductRegistrationResponse,
   seedLaunches,
   type StoredContest,
   type StoredLaunch,
@@ -31,6 +35,7 @@ import {
   type WeeklyBoardResponse,
   getAvailableTags,
   matchesSearch,
+  toProductRegistrationResponse,
   withViewerVote
 } from "./kick-service";
 
@@ -136,6 +141,48 @@ export function createPostgresKickService(databaseUrl: string): KickService {
           .slice(0, 3)
           .map((candidate) => withViewerVote(candidate, state, viewerId))
       };
+    },
+
+    async registerProduct(input: ProductRegistrationInput): Promise<ProductRegistrationResponse> {
+      await ensureSchema();
+      const state = await loadState(sql);
+      const storedLaunch = createRegisteredLaunch(input, state.launches, nextLaunchRank(state.launches));
+
+      await sql.transaction((tx) => [
+        tx`
+          INSERT INTO products (id, slug, data, created_at)
+          VALUES (
+            ${storedLaunch.product.id},
+            ${storedLaunch.product.slug},
+            ${JSON.stringify(storedLaunch.product)}::jsonb,
+            ${storedLaunch.product.createdAt}
+          )
+        `,
+        tx`
+          INSERT INTO launches (
+            id,
+            rank,
+            product_id,
+            board_id,
+            base_vote_count,
+            comment_count,
+            featured_reason,
+            launched_at
+          )
+          VALUES (
+            ${storedLaunch.id},
+            ${storedLaunch.rank},
+            ${storedLaunch.product.id},
+            ${state.board.id},
+            ${storedLaunch.voteCount},
+            ${storedLaunch.commentCount},
+            ${storedLaunch.featuredReason},
+            ${storedLaunch.launchedAt}
+          )
+        `
+      ]);
+
+      return toProductRegistrationResponse(storedLaunch);
     },
 
     async getContests(): Promise<ContestListResponse> {

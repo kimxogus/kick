@@ -25,7 +25,7 @@ async function isVisible(locator, timeout = 3000) {
 
 // ---- Home `/` ----
 await page.goto(baseUrl, { waitUntil: "networkidle" });
-record("home shows launch hero", await isVisible(page.getByRole("heading", { name: /agent에게 말 한마디로/ })));
+record("home shows launch hero", await isVisible(page.getByRole("heading", { name: /kick에게 말 한마디로/ })));
 record("home shows agent step", await isVisible(page.getByText("에이전트가 만듭니다")));
 record("home shows weekly highlight", await isVisible(page.getByText("이번 주, 주목받는 제품")));
 record("home shows contest summary", await isVisible(page.getByText("지금 콘테스트")));

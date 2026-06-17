@@ -2,7 +2,7 @@
 
 - 상태: Accepted
 - 날짜: 2026-06-13
-- 관련 문서: `README.md`, `SPEC.md`, `ARCHITECTURE.md`, `TODO.md`, `ROADMAP.md`
+- 관련 문서: `README.md`, `DEVELOPMENT.md`, `SPEC.md`, `ARCHITECTURE.md`, `TODO.md`, `ROADMAP.md`
 
 ## 맥락
 

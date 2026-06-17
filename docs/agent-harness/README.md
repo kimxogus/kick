@@ -8,15 +8,43 @@
 | --- | --- | --- | --- |
 | 공통 지침 | `AGENTS.md` | `CLAUDE.md`가 `@AGENTS.md` import | `AGENTS.md` |
 | Skill 원본 | `.agents/skills/*` symlink | `.claude/skills/*` symlink | `skills/*` |
+| Plugin 배포 | `.agents/plugins/marketplace.json` | `.claude-plugin/marketplace.json` | `plugins/*` |
 | MCP 설정 | `.codex/config.toml` | `.mcp.json` | 실제 서버 구현 ADR 이후 결정 |
 | 로컬 개인 설정 | 사용자 로컬 config | `CLAUDE.local.md`, `.claude/settings.local.json` | git 제외 |
 
 ## 운영 원칙
 
-- `skills/`를 원본으로 관리한다.
+- `skills/`를 repo-local Skill 원본으로 관리한다.
 - `.agents/skills`와 `.claude/skills`는 discovery 경로이며 직접 편집하지 않는다.
+- 외부 사용자 배포는 `plugins/` 아래 plugin 패키지와 GitHub repo 기반 설치 안내로 관리한다.
 - 실제 MCP 서버가 생기기 전까지 `.codex/config.toml`과 `.mcp.json`은 빈 설정 또는 주석만 유지한다.
 - MCP tool은 구현 전에 `mcp-contract.md`와 ADR로 입출력, 권한, 실패 모드를 정한다.
+
+## Plugin 배포
+
+`kick` 배포용 plugin은 `plugins/kick/`에 둔다. Codex는 `.agents/plugins/marketplace.json`, Claude Code는 `.claude-plugin/marketplace.json`을 통해 GitHub repo `kimxogus/kick`에서 설치한다.
+
+```bash
+codex plugin marketplace add kimxogus/kick
+codex plugin add kick@kick
+```
+
+```text
+/plugin marketplace add kimxogus/kick
+/plugin install kick@kick
+/reload-plugins
+```
+
+Claude Code catalog는 repo-relative source(`./plugins/kick`)를 사용하므로 GitHub repo 방식으로 추가한다. raw `marketplace.json` URL 방식은 지원하지 않는다.
+
+`skills/kick/` 원본을 바꾼 뒤에는 아래 명령으로 배포 복사본을 맞춘다.
+
+```bash
+npm run plugin:sync:kick
+npm run plugin:check:kick
+```
+
+Plugin 변경을 배포할 때는 Codex manifest, Claude manifest의 `version`과 `plugins/kick/CHANGELOG.md`를 함께 갱신한다. Claude Code catalog entry에는 별도 `version`을 두지 않는다.
 
 ## 새 Skill 추가 절차
 

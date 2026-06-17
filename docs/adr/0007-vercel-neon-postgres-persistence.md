@@ -2,7 +2,7 @@
 
 - 상태: Accepted
 - 날짜: 2026-06-15
-- 관련 문서: `README.md`, `SPEC.md`, `ARCHITECTURE.md`, `TODO.md`, `docs/contracts/mvp-data-and-api-contract.md`, `docs/deployment/vercel.md`
+- 관련 문서: `README.md`, `DEVELOPMENT.md`, `SPEC.md`, `ARCHITECTURE.md`, `TODO.md`, `docs/contracts/mvp-data-and-api-contract.md`, `docs/deployment/vercel.md`
 - 대체: `docs/adr/0003-application-stack-selection.md`의 Codex Sites 우선 배포 결정, `docs/adr/0006-nextjs-mvp-application-stack.md`의 메모리 저장소 우선 데이터 결정
 
 ## 맥락

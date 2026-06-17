@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { GET as getWeeklyBoard } from "./boards/weekly/route";
 import { GET as getContests } from "./contests/route";
@@ -7,10 +7,20 @@ import { GET as getMakerSubmission } from "./maker/submissions/[id]/route";
 import { POST as createMakerSubmission } from "./maker/submissions/route";
 import { POST as createNewsletterSubscription } from "./newsletter-subscriptions/route";
 import { GET as getProduct } from "./products/[slug]/route";
+import { POST as registerProduct } from "./products/route";
 import { POST as toggleVote } from "./votes/route";
 import { POST as resetSeed } from "./admin/reset/route";
+import { clearRegisteredStore } from "@/server/registered-store";
 
 describe("kick MVP API route handlers", () => {
+  beforeEach(() => {
+    clearRegisteredStore();
+  });
+
+  afterEach(() => {
+    clearRegisteredStore();
+  });
+
   it("GET /api/boards/weekly는 검색과 태그 필터를 적용한다", async () => {
     const response = await getWeeklyBoard(
       new Request("http://localhost/api/boards/weekly?q=developer&tag=Productivity&viewer_id=api_viewer")
@@ -42,6 +52,92 @@ describe("kick MVP API route handlers", () => {
     expect(body.product.kickPoint).toContain("코드");
     expect(body.product.cardNewsCopy.length).toBeGreaterThanOrEqual(3);
     expect(body.relatedLaunches.length).toBeGreaterThan(0);
+  });
+
+  it("POST와 GET /api/products는 Skill 등록 제품을 저장하고 상세를 조회한다", async () => {
+    const response = await registerProduct(
+      new Request("http://localhost/api/products", {
+        method: "POST",
+        body: JSON.stringify({
+          name: "DemoFlow",
+          emoji: "🚀",
+          category: "생산성",
+          tagline: "시연 준비를 한 흐름으로 정리하는 도구",
+          description: "DemoFlow는 제품 시연을 준비하는 팀이 핵심 메시지와 체크리스트를 정리하도록 돕습니다.",
+          kickPoint: "흩어진 시연 준비를 한 페이지로 모아 바로 공유합니다.",
+          tags: ["AI", "Productivity"],
+          targetUsers: ["초기 제품팀"],
+          useCases: ["데모 스크립트 정리"],
+          cardNewsCopy: ["시연 흐름을 한눈에", "체크리스트로 누락 없이"],
+          targetMessages: [{ audience: "초기 제품팀", message: "시연 전 핵심 메시지를 빠르게 맞춥니다." }],
+          maker: { name: "Demo Team", profileUrl: "https://example.com/demo-team" }
+        })
+      })
+    );
+    const created = await response.json();
+
+    const detailResponse = await getProduct(new Request("http://localhost/api/products/demoflow"), {
+      params: Promise.resolve({ slug: "demoflow" })
+    });
+    const detail = await detailResponse.json();
+
+    expect(response.status).toBe(200);
+    expect(created.detailUrl).toBe("/products/demoflow");
+    expect(created.product.websiteUrl).toBe("#");
+    expect(created.product.makers[0].profileUrl).toBe("https://example.com/demo-team");
+    expect(detailResponse.status).toBe(200);
+    expect(detail.product.name).toBe("DemoFlow");
+    expect(detail.launch.voteCount).toBe(0);
+  });
+
+  it("POST /api/products는 필수 등록 필드를 검증한다", async () => {
+    const response = await registerProduct(
+      new Request("http://localhost/api/products", {
+        method: "POST",
+        body: JSON.stringify({
+          name: "",
+          category: "",
+          tagline: "한 줄 소개",
+          description: "상세 소개",
+          kickPoint: "",
+          tags: [],
+          targetUsers: [],
+          useCases: [],
+          cardNewsCopy: [],
+          targetMessages: []
+        })
+      })
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(body.error.code).toBe("VALIDATION_ERROR");
+    expect(body.error.fields).toEqual(expect.arrayContaining(["name", "category", "kickPoint"]));
+  });
+
+  it("POST /api/products는 잘못된 타입의 등록 필드를 validation 오류로 처리한다", async () => {
+    const response = await registerProduct(
+      new Request("http://localhost/api/products", {
+        method: "POST",
+        body: JSON.stringify({
+          name: "Bad Payload",
+          category: { label: "생산성" },
+          tagline: ["한 줄 소개"],
+          description: "상세 소개",
+          kickPoint: null,
+          tags: [1, "AI"],
+          targetUsers: "초기 제품팀",
+          useCases: [],
+          cardNewsCopy: [],
+          targetMessages: [{ audience: "초기 제품팀", message: 123 }]
+        })
+      })
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(body.error.code).toBe("VALIDATION_ERROR");
+    expect(body.error.fields).toEqual(expect.arrayContaining(["category", "tagline", "kickPoint"]));
   });
 
   it("GET /api/contests는 공개 contest 목록을 반환한다", async () => {

@@ -193,8 +193,8 @@ export type AdminResetResponse = {
   contests: number;
 };
 
-// product-kick Skill이 문서에서 추출·정제한 제품을 메모리 store에 등록할 때 쓰는 입력.
-// 사람 입력은 제품명뿐이고 나머지는 Skill이 생성한다. URL은 받지 않는다.
+// product-kick Skill이 문서에서 추출·정제한 제품을 등록할 때 쓰는 입력.
+// 사람 입력은 제품명뿐이고 나머지는 Skill이 생성한다. 제품 URL은 받지 않는다.
 export type ProductRegistrationInput = {
   name: string;
   emoji?: string;
@@ -232,6 +232,7 @@ export type KickService = {
   getContests(): Promise<ContestListResponse>;
   toggleVote(request: VoteRequest): Promise<VoteResponse>;
   createNewsletterSubscription(request: NewsletterRequest): Promise<NewsletterResponse>;
+  registerProduct(input: ProductRegistrationInput): Promise<ProductRegistrationResponse>;
   createLaunchAssist(request: MakerSubmissionDraft): Promise<LaunchAssistResponse>;
   createMakerSubmission(request: MakerSubmissionRequest): Promise<MakerSubmissionResponse>;
   getMakerSubmission(id: string): Promise<MakerSubmissionDetailResponse>;
@@ -838,6 +839,12 @@ export function createKickService(): KickService {
       };
     },
 
+    async registerProduct(input) {
+      const storedLaunch = createRegisteredLaunch(input, state.launches, nextLaunchRank(state.launches));
+      state.launches.push(storedLaunch);
+      return toProductRegistrationResponse(storedLaunch);
+    },
+
     async getContests() {
       return {
         contests: state.contests.map((contest) => ({
@@ -1032,6 +1039,80 @@ export function createResetResponse(storage: AdminResetResponse["storage"], stat
   };
 }
 
+export function createRegisteredLaunch(
+  input: ProductRegistrationInput,
+  existingLaunches: StoredLaunch[],
+  rank: number,
+  now = new Date().toISOString()
+): StoredLaunch {
+  const body: UnknownRecord = isRecord(input) ? input : {};
+  const missing: string[] = [];
+  const name = collectRegistrationText(body, "name", missing);
+  const category = collectRegistrationText(body, "category", missing);
+  const tagline = collectRegistrationText(body, "tagline", missing);
+  const description = collectRegistrationText(body, "description", missing);
+  const kickPoint = collectRegistrationText(body, "kickPoint", missing);
+  if (missing.length > 0) {
+    throw new KickServiceError("VALIDATION_ERROR", "제품 등록 정보를 확인해주세요.", missing);
+  }
+
+  const slug = ensureUniqueSlug(slugify(name), existingLaunches);
+  const makerInput = isRecord(body.maker) ? body.maker : {};
+  const makerName = optionalText(makerInput.name);
+  const maker: Maker | undefined = makerName
+    ? {
+        id: `maker_${slug}`,
+        name: makerName,
+        role: optionalText(makerInput.role),
+        profileUrl: optionalText(makerInput.profileUrl)
+      }
+    : undefined;
+
+  const product: Product = {
+    id: `product_${slug}`,
+    slug,
+    name,
+    tagline,
+    category,
+    emoji: optionalText(body.emoji),
+    description,
+    websiteUrl: "#",
+    thumbnailUrl: "",
+    gallery: [],
+    makers: maker ? [maker] : [],
+    tags: dedupeRegistrationValues(body.tags),
+    targetUsers: dedupeRegistrationValues(body.targetUsers),
+    useCases: dedupeRegistrationValues(body.useCases),
+    kickPoint,
+    cardNewsCopy: dedupeRegistrationValues(body.cardNewsCopy),
+    targetMessages: normalizeRegistrationMessages(body.targetMessages),
+    status: "published",
+    createdAt: now
+  };
+
+  return {
+    id: `launch_${slug}`,
+    rank,
+    product,
+    voteCount: 0,
+    commentCount: 0,
+    featuredReason: "",
+    launchedAt: now
+  };
+}
+
+export function toProductRegistrationResponse(storedLaunch: StoredLaunch): ProductRegistrationResponse {
+  return {
+    product: storedLaunch.product,
+    launch: { ...storedLaunch, isVotedByViewer: false },
+    detailUrl: `/products/${storedLaunch.product.slug}`
+  };
+}
+
+export function nextLaunchRank(launches: StoredLaunch[]): number {
+  return Math.max(0, ...launches.map((launch) => launch.rank)) + 1;
+}
+
 export function withViewerVote(launch: StoredLaunch, state: KickState, viewerId?: string): Launch {
   return {
     ...launch,
@@ -1181,3 +1262,58 @@ function uniqueTags(tags: string[]): string[] {
   return [...new Set(tags.filter(Boolean))].slice(0, 5);
 }
 
+function collectRegistrationText(body: UnknownRecord, field: keyof Pick<ProductRegistrationInput, "name" | "category" | "tagline" | "description" | "kickPoint">, invalidFields: string[]): string {
+  const value = body[field];
+  if (typeof value !== "string" || !value.trim()) {
+    pushField(invalidFields, field);
+    return "";
+  }
+  return value.trim();
+}
+
+function optionalText(value: unknown): string | undefined {
+  return typeof value === "string" ? value.trim() || undefined : undefined;
+}
+
+function dedupeRegistrationValues(values: unknown): string[] {
+  if (!Array.isArray(values)) {
+    return [];
+  }
+  return [...new Set(values.filter((value): value is string => typeof value === "string").map((value) => value.trim()).filter(Boolean))];
+}
+
+function normalizeRegistrationMessages(values: unknown): TargetMessage[] {
+  if (!Array.isArray(values)) {
+    return [];
+  }
+  return values.flatMap((message) => {
+    if (!isRecord(message)) {
+      return [];
+    }
+    const audience = optionalText(message.audience);
+    const text = optionalText(message.message);
+    return audience && text ? [{ audience, message: text }] : [];
+  });
+}
+
+function slugify(name: string): string {
+  return (
+    name
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9가-힣]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "product"
+  );
+}
+
+function ensureUniqueSlug(base: string, launches: StoredLaunch[]): string {
+  const used = new Set(launches.map((launch) => launch.product.slug));
+  if (!used.has(base)) {
+    return base;
+  }
+  let suffix = 2;
+  while (used.has(`${base}-${suffix}`)) {
+    suffix += 1;
+  }
+  return `${base}-${suffix}`;
+}

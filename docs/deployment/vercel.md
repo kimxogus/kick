@@ -7,7 +7,7 @@ kick MVP는 Vercel Git Integration으로 배포한다. GitHub Actions는 product
 ## Vercel 프로젝트 설정
 
 - Git Provider: GitHub
-- Repository: `kimxogus/k-producthunt`
+- Repository: `kimxogus/kick`
 - Root Directory: `apps/web`
 - Framework Preset: `Next.js`
 - Production Branch: `main`

@@ -117,7 +117,7 @@ MVP 시연은 탐색자와 제작자 2개 플로우를 모두 보여준다.
 - `DATABASE_URL`이 있으면 제품, board, launch, contest seed와 vote, newsletter, 제작자 제출 후보를 Postgres에 저장한다.
 - `DATABASE_URL`이 없으면 fixture/memory store로 로컬 개발과 테스트가 가능해야 한다.
 - 발표 전에는 CLI 또는 `/admin` direct route로 현재 seed 상태를 복원할 수 있어야 한다.
-- fallback 실행 명령은 README에 문서화한다.
+- fallback 실행 명령은 `DEVELOPMENT.md`에 문서화한다.
 - MVP 앱은 Next.js App Router로 구현하며, route handler와 UI를 같은 앱에서 관리한다.
 
 ## MVP 후순위 요구사항

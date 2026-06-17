@@ -1486,15 +1486,63 @@ img.product-media {
 /* ===== 재구성 화면(홈 허브 / 위클리보드 / 탐색) ===== */
 
 /* ---- 스킬 안내 + 복사 ---- */
+.skill-guide {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 56px;
+}
+
+.skill-setup-callout {
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 20px 22px;
+}
+
+.skill-setup-callout strong {
+  display: block;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.skill-setup-callout p {
+  color: var(--ink-2);
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 6px 0 0;
+}
+
+.skill-setup-callout__link {
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  color: var(--ink);
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 800;
+  justify-content: center;
+  padding: 10px 16px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.skill-setup-callout__link:hover {
+  background: var(--ink);
+  color: #fff;
+}
+
 .skill-callout {
   align-items: center;
   background: var(--bg-soft);
   border: 1px solid var(--line);
   border-radius: 999px;
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   justify-content: space-between;
-  margin-bottom: 56px;
   padding: 10px 10px 10px 22px;
 }
 
@@ -1503,6 +1551,7 @@ img.product-media {
   font-family: inherit;
   font-size: 15px;
   font-weight: 700;
+  min-width: 220px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1781,6 +1830,24 @@ img.product-media {
 }
 
 @media (max-width: 600px) {
+  .skill-setup-callout {
+    grid-template-columns: 1fr;
+  }
+
+  .skill-setup-callout__link {
+    white-space: normal;
+  }
+
+  .skill-callout {
+    border-radius: var(--radius-lg);
+    padding: 14px;
+  }
+
+  .skill-callout__text {
+    min-width: 0;
+    white-space: normal;
+  }
+
   .product-grid {
     grid-template-columns: 1fr;
   }

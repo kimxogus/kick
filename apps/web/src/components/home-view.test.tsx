@@ -25,6 +25,9 @@ describe("HomeView", () => {
     expect(screen.getByRole("heading", { name: /kick에게 말 한마디로/ })).toBeTruthy();
     expect(screen.getByText("에이전트가 만듭니다")).toBeTruthy();
     expect(screen.getByText(/한마디면 충분해요/)).toBeTruthy();
+    expect(screen.getByText(/GitHub repo에서 kick plugin 설치 가이드 확인/)).toBeTruthy();
+    const readmeLink = screen.getByRole("link", { name: "설치 가이드 보기" });
+    expect(readmeLink.getAttribute("href")).toBe("https://github.com/kimxogus/kick#readme");
     expect(screen.getByRole("link", { name: new RegExp(highlights[0].product.name) })).toBeTruthy();
     expect(screen.getByText("예정")).toBeTruthy();
     expect(screen.getByText("진행중")).toBeTruthy();
@@ -86,7 +89,7 @@ describe("HomeView", () => {
       "/api/newsletter-subscriptions",
       expect.objectContaining({
         method: "POST",
-        body: JSON.stringify({ email: "maker@example.com", source: "home" })
+        body: JSON.stringify({ email: "maker@example.com", source: "board" })
       })
     );
   });
