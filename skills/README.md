@@ -6,7 +6,7 @@
 
 ```text
 skills/
-└── product-kick/
+└── kick/
     ├── SKILL.md
     └── references/
         └── product-registration-workflow.md
@@ -15,8 +15,8 @@ skills/
 Discovery 경로는 symlink로 연결한다.
 
 ```text
-.agents/skills/product-kick -> ../../skills/product-kick
-.claude/skills/product-kick -> ../../skills/product-kick
+.agents/skills/kick -> ../../skills/kick
+.claude/skills/kick -> ../../skills/kick
 ```
 
 ## 규칙
@@ -31,19 +31,19 @@ Discovery 경로는 symlink로 연결한다.
 ## 검증
 
 ```bash
-test -L .agents/skills/product-kick
-test -f .agents/skills/product-kick/SKILL.md
-test -L .claude/skills/product-kick
-test -f .claude/skills/product-kick/SKILL.md
-readlink .agents/skills/product-kick
-readlink .claude/skills/product-kick
+test -L .agents/skills/kick
+test -f .agents/skills/kick/SKILL.md
+test -L .claude/skills/kick
+test -f .claude/skills/kick/SKILL.md
+readlink .agents/skills/kick
+readlink .claude/skills/kick
 ```
 
 기대값:
 
 ```text
-../../skills/product-kick
-../../skills/product-kick
+../../skills/kick
+../../skills/kick
 ```
 
 ## 새 Skill 추가 절차

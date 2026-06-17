@@ -91,7 +91,7 @@ const SLIDES: Slide[] = [
   {
     kicker: "kick",
     headline: "그 첫 발,\nkick이 찹니다",
-    lead: "kick.vercel.app",
+    lead: "kick-web-ebon.vercel.app",
     bg: "#111111",
     ink: "#ffffff",
     accent: "#f4e84d"

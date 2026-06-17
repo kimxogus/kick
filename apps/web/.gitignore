@@ -1,3 +1,5 @@
 .next
 out
 coverage
+
+.kick-registered.json

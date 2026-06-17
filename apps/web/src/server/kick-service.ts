@@ -193,6 +193,29 @@ export type AdminResetResponse = {
   contests: number;
 };
 
+// product-kick Skill이 문서에서 추출·정제한 제품을 메모리 store에 등록할 때 쓰는 입력.
+// 사람 입력은 제품명뿐이고 나머지는 Skill이 생성한다. URL은 받지 않는다.
+export type ProductRegistrationInput = {
+  name: string;
+  emoji?: string;
+  category: string;
+  tagline: string;
+  description: string;
+  kickPoint: string;
+  tags: string[];
+  targetUsers: string[];
+  useCases: string[];
+  cardNewsCopy: string[];
+  targetMessages: TargetMessage[];
+  maker?: { name: string; role?: string; profileUrl?: string };
+};
+
+export type ProductRegistrationResponse = {
+  product: Product;
+  launch: Launch;
+  detailUrl: string;
+};
+
 export class KickServiceError extends Error {
   constructor(
     public readonly code: "VALIDATION_ERROR" | "NOT_FOUND",
@@ -1157,3 +1180,4 @@ function toTag(value: string): string {
 function uniqueTags(tags: string[]): string[] {
   return [...new Set(tags.filter(Boolean))].slice(0, 5);
 }
+
