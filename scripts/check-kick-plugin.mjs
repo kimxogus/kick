@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 const requiredFiles = [
+  "DEVELOPMENT.md",
   ".agents/plugins/marketplace.json",
   ".claude-plugin/marketplace.json",
   "plugins/kick/.codex-plugin/plugin.json",
@@ -27,8 +28,10 @@ const syncedPairs = [
 const requiredNeedles = [
   ["README.md", "codex plugin marketplace add kimxogus/kick"],
   ["README.md", "/plugin marketplace add kimxogus/kick"],
+  ["README.md", "kick 스킬을 참고해서 내 제품 올려줘"],
+  ["DEVELOPMENT.md", "npm run plugin:sync:kick"],
   ["apps/web/src/components/home-view.tsx", "https://github.com/kimxogus/kick#readme"],
-  ["apps/web/src/components/home-view.tsx", "GitHub repo에서 kick plugin 설치 방법 확인"]
+  ["apps/web/src/components/home-view.tsx", "GitHub repo에서 kick plugin 설치 가이드 확인"]
 ];
 
 const failures = [];

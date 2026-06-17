@@ -4,6 +4,8 @@
 
 ## 문서 맵
 
+- `../README.md`: 사용자용 plugin 설치와 제품 등록 빠른 시작
+- `../DEVELOPMENT.md`: 개발자용 로컬 실행, 검증, 문서 운영 가이드
 - `../SPEC.md`: 제품 요구사항과 미결정 사항
 - `../ARCHITECTURE.md`: 시스템 구조와 기술 후보
 - `../TODO.md`: 실행 TODO
@@ -16,6 +18,8 @@
 
 ## 갱신 규칙
 
+- 사용자 설치와 제품 등록 안내가 바뀌면 `README.md`를 갱신한다.
+- 로컬 실행, 테스트, 개발자 검증 절차가 바뀌면 `DEVELOPMENT.md`를 갱신한다.
 - 요구사항이 바뀌면 `SPEC.md`를 먼저 갱신한다.
 - 시스템 구조, 데이터 모델, 배포, Auth, MCP 설계가 바뀌면 `ARCHITECTURE.md`와 관련 ADR을 먼저 갱신한다.
 - 배포 방식이나 CI 정책이 바뀌면 `deployment/` 문서와 관련 ADR을 먼저 갱신한다.

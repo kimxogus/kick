@@ -4,7 +4,7 @@
 - 날짜: 2026-06-09
 - 갱신: 2026-06-13
 - 대체: `docs/adr/0007-vercel-neon-postgres-persistence.md`
-- 관련 문서: `README.md`, `SPEC.md`, `ARCHITECTURE.md`, `TODO.md`, `ROADMAP.md`, `docs/research/2026-06-13-product-and-agent-flow-research.md`
+- 관련 문서: `README.md`, `DEVELOPMENT.md`, `SPEC.md`, `ARCHITECTURE.md`, `TODO.md`, `ROADMAP.md`, `docs/research/2026-06-13-product-and-agent-flow-research.md`
 
 > 현재 MVP 배포와 영속화 기준은 `docs/adr/0007-vercel-neon-postgres-persistence.md`를 따른다. 이 문서는 Codex Sites 우선 전략을 선택했던 당시의 맥락과 근거를 보존한다.
 
@@ -30,7 +30,7 @@ MVP 실행과 배포 전략은 아래 2-track으로 확정한다.
    - 배포 직후에는 deployment status와 production URL을 확인한다.
 2. 필수 fallback은 정적 파일 로컬 실행 또는 localhost 실행이다.
    - Sites 접근, 권한, preview 정책, plugin 설치, 배포 실패가 발생해도 MVP 시연이 가능해야 한다.
-   - fallback 실행 명령은 앱 구현 단계에서 README 또는 별도 실행 문서에 기록한다.
+   - fallback 실행 명령은 앱 구현 단계에서 `DEVELOPMENT.md` 또는 별도 실행 문서에 기록한다.
 3. D1/R2는 MVP 필수 요구사항이 아니다.
    - seed 데이터와 UI 시연은 우선 정적 데이터 또는 앱 내부 데이터로 처리한다.
    - 지속 데이터, 사용자 기록, 업로드 파일이 실제로 필요해질 때만 D1/R2를 요청한다.

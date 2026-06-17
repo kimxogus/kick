@@ -3,7 +3,7 @@
 - 상태: Accepted
 - 날짜: 2026-06-14
 - 갱신: 2026-06-15
-- 관련 문서: `README.md`, `SPEC.md`, `ARCHITECTURE.md`, `TODO.md`, `docs/contracts/mvp-data-and-api-contract.md`, `docs/contracts/mvp-ui-contract.md`
+- 관련 문서: `README.md`, `DEVELOPMENT.md`, `SPEC.md`, `ARCHITECTURE.md`, `TODO.md`, `docs/contracts/mvp-data-and-api-contract.md`, `docs/contracts/mvp-ui-contract.md`
 
 ## 맥락
 
@@ -36,7 +36,7 @@ MVP 앱 스택은 Next.js App Router, TypeScript, Vitest, React Testing Library,
    - 구현은 실패 테스트 작성, 실패 확인, 최소 구현, 통과 확인 순서를 따른다.
 5. 배포와 fallback
    - Codex Sites 우선을 유지하되, Next.js build 결과가 Sites와 충돌할 경우 로컬 `next dev` 시연을 fallback으로 사용한다.
-   - 로컬 실행 명령은 앱 스캐폴딩 후 README에 기록한다.
+   - 로컬 실행 명령은 앱 스캐폴딩 후 `DEVELOPMENT.md`에 기록한다.
 
 ## 고려한 선택지
 
@@ -60,4 +60,4 @@ MVP 앱 스택은 Next.js App Router, TypeScript, Vitest, React Testing Library,
 - [ ] Vitest와 React Testing Library를 설정한다.
 - [ ] API 계약 테스트를 먼저 작성한다.
 - [ ] Codex Sites saved version 생성 가능 여부를 앱 구현 후 검증한다.
-- [ ] 로컬 fallback 실행 명령을 README에 기록한다.
+- [ ] 로컬 fallback 실행 명령을 `DEVELOPMENT.md`에 기록한다.

@@ -15,7 +15,8 @@
 
 ## 문서 구조
 
-- `README.md`: 프로젝트 진입점과 현재 상태
+- `README.md`: 사용자용 plugin 설치와 제품 등록 빠른 시작
+- `DEVELOPMENT.md`: 개발자용 로컬 실행, 검증, 문서 운영 가이드
 - `SPEC.md`: 제품 요구사항, 성공 기준, 미결정 사항
 - `ARCHITECTURE.md`: 시스템 구조, 기술 후보, 데이터 모델 후보
 - `TODO.md`: 기획/기술/문서/구현 TODO

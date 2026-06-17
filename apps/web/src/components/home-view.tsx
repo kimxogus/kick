@@ -93,11 +93,11 @@ export function HomeView({ highlights, contestSummary }: HomeViewProps) {
       <div className="skill-guide" aria-label="스킬 등록 안내">
         <section className="skill-setup-callout" aria-label="plugin 설치 안내">
           <div>
-            <strong>GitHub repo에서 kick plugin 설치 방법 확인</strong>
+            <strong>GitHub repo에서 kick plugin 설치 가이드 확인</strong>
             <p>Codex와 Claude Code에 kick plugin을 설치한 뒤 아래 문구로 제품 등록을 요청합니다.</p>
           </div>
           <a className="skill-setup-callout__link" href={README_URL}>
-            README에서 설치 방법 보기
+            설치 가이드 보기
           </a>
         </section>
 

@@ -2,7 +2,7 @@
 
 - 상태: Accepted
 - 날짜: 2026-06-17
-- 관련 문서: `README.md`, `docs/agent-harness/README.md`, `skills/README.md`, `plugins/kick/README.md`
+- 관련 문서: `README.md`, `DEVELOPMENT.md`, `docs/agent-harness/README.md`, `skills/README.md`, `plugins/kick/README.md`
 
 ## 맥락
 

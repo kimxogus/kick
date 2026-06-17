@@ -2,7 +2,7 @@
 
 - 상태: Accepted
 - 날짜: 2026-06-09
-- 관련 문서: `README.md`, `SPEC.md`, `ARCHITECTURE.md`, `TODO.md`, `ROADMAP.md`, `docs/README.md`
+- 관련 문서: `README.md`, `DEVELOPMENT.md`, `SPEC.md`, `ARCHITECTURE.md`, `TODO.md`, `ROADMAP.md`, `docs/README.md`
 
 ## 맥락
 
@@ -24,7 +24,8 @@
 
 ## 결과
 
-- 새 세션도 `README.md`에서 핵심 문서로 이동할 수 있다.
+- 사용자는 `README.md`에서 plugin 설치와 제품 등록을 시작할 수 있다.
+- 개발자와 agent는 `DEVELOPMENT.md`에서 로컬 실행, 검증, 핵심 문서로 이동할 수 있다.
 - 미결정 사항은 `TODO.md`와 `Proposed` ADR로 남긴다.
 - 확정된 의사결정은 ADR로 추적한다.
 - 문서 유지 비용은 늘지만, 1주 MVP에서 반복되는 혼선을 줄인다.
