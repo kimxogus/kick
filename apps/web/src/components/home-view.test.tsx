@@ -22,7 +22,7 @@ describe("HomeView", () => {
 
     render(<HomeView highlights={highlights} contestSummary={summary} />);
 
-    expect(screen.getByRole("heading", { name: /agent에게 말 한마디로/ })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: /kick에게 말 한마디로/ })).toBeTruthy();
     expect(screen.getByText("에이전트가 만듭니다")).toBeTruthy();
     expect(screen.getByText(/한마디면 충분해요/)).toBeTruthy();
     expect(screen.getByRole("link", { name: new RegExp(highlights[0].product.name) })).toBeTruthy();
