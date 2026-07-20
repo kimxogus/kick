@@ -66,6 +66,52 @@ describe("runtime kick service selection", () => {
     expect(detail.launch.voteCount).toBe(0);
   });
 
+  it("DATABASE_URL이 없는 runtime service는 파일 store 등록 제품 vote를 토글한다", async () => {
+    const service = createRuntimeKickService({});
+
+    const created = await service.registerProduct({
+      name: "DemoFlow",
+      category: "생산성",
+      tagline: "시연 준비를 한 흐름으로 정리하는 도구",
+      description: "DemoFlow는 제품 시연을 준비하는 팀이 핵심 메시지와 체크리스트를 정리하도록 돕습니다.",
+      kickPoint: "흩어진 시연 준비를 한 페이지로 모아 바로 공유합니다.",
+      tags: [],
+      targetUsers: [],
+      useCases: [],
+      cardNewsCopy: [],
+      targetMessages: []
+    });
+
+    const voted = await service.toggleVote({
+      launchId: created.launch.id,
+      viewerId: "viewer_registered"
+    });
+    const votedDetail = await service.getProductDetail(created.product.slug, "viewer_registered");
+    const unvoted = await service.toggleVote({
+      launchId: created.launch.id,
+      viewerId: "viewer_registered"
+    });
+    const unvotedDetail = await service.getProductDetail(created.product.slug, "viewer_registered");
+
+    expect(voted).toMatchObject({
+      launchId: "launch_demoflow",
+      voteCount: 1,
+      isVotedByViewer: true
+    });
+    expect(votedDetail.launch).toMatchObject({
+      voteCount: 1,
+      isVotedByViewer: true
+    });
+    expect(unvoted).toMatchObject({
+      voteCount: 0,
+      isVotedByViewer: false
+    });
+    expect(unvotedDetail.launch).toMatchObject({
+      voteCount: 0,
+      isVotedByViewer: false
+    });
+  });
+
   it("DATABASE_URL이 있으면 Postgres service를 선택한다", async () => {
     const postgresService = {
       resetToSeed: vi.fn(async () => ({

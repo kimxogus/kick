@@ -12,6 +12,8 @@ import {
   type ProductRegistrationInput,
   type ProductRegistrationResponse,
   type StoredLaunch,
+  type VoteRequest,
+  type VoteResponse,
   toProductRegistrationResponse
 } from "./kick-service";
 
@@ -22,20 +24,34 @@ import {
 // RSC worker와 route handler worker의 process.cwd()가 다를 수 있어 cwd 무관한 tmpdir에 둔다.
 const STORE_PATH = join(tmpdir(), "kick-producthunt-registered.json");
 
-function readAll(): StoredLaunch[] {
+type RegisteredStoreState = {
+  launches: StoredLaunch[];
+  votes: Record<string, string[]>;
+};
+
+function readStore(): RegisteredStoreState {
   if (!existsSync(STORE_PATH)) {
-    return [];
+    return { launches: [], votes: {} };
   }
   try {
     const parsed = JSON.parse(readFileSync(STORE_PATH, "utf8")) as unknown;
-    return Array.isArray(parsed) ? (parsed as StoredLaunch[]) : [];
+    if (Array.isArray(parsed)) {
+      return { launches: parsed as StoredLaunch[], votes: {} };
+    }
+    if (isRecord(parsed) && Array.isArray(parsed.launches)) {
+      return {
+        launches: parsed.launches as StoredLaunch[],
+        votes: normalizeVotes(parsed.votes)
+      };
+    }
+    return { launches: [], votes: {} };
   } catch {
-    return [];
+    return { launches: [], votes: {} };
   }
 }
 
-function writeAll(launches: StoredLaunch[]): void {
-  writeFileSync(STORE_PATH, JSON.stringify(launches, null, 2), "utf8");
+function writeStore(state: RegisteredStoreState): void {
+  writeFileSync(STORE_PATH, JSON.stringify(state, null, 2), "utf8");
 }
 
 export function clearRegisteredStore(): void {
@@ -45,15 +61,17 @@ export function clearRegisteredStore(): void {
 }
 
 export function registerProduct(input: ProductRegistrationInput): ProductRegistrationResponse {
-  const existing = readAll();
+  const state = readStore();
+  const existing = state.launches;
   const allLaunches = [...seedLaunches, ...existing];
   const storedLaunch = createRegisteredLaunch(input, allLaunches, nextLaunchRank(allLaunches));
-  writeAll([...existing, storedLaunch]);
+  writeStore({ ...state, launches: [...existing, storedLaunch] });
   return toProductRegistrationResponse(storedLaunch);
 }
 
-export function findRegisteredDetail(slug: string): ProductDetailResponse | null {
-  const launch = readAll().find((candidate) => candidate.product.slug === slug);
+export function findRegisteredDetail(slug: string, viewerId?: string): ProductDetailResponse | null {
+  const state = readStore();
+  const launch = state.launches.find((candidate) => candidate.product.slug === slug);
   if (!launch) {
     return null;
   }
@@ -63,8 +81,37 @@ export function findRegisteredDetail(slug: string): ProductDetailResponse | null
     .map((related) => ({ ...related, isVotedByViewer: false }));
   return {
     product: launch.product,
-    launch: { ...launch, isVotedByViewer: false },
+    launch: {
+      ...launch,
+      isVotedByViewer: viewerId ? state.votes[launch.id]?.includes(viewerId) ?? false : false
+    },
     relatedLaunches
+  };
+}
+
+export function toggleRegisteredVote(request: VoteRequest): VoteResponse | null {
+  const state = readStore();
+  const launch = state.launches.find((candidate) => candidate.id === request.launchId);
+  if (!launch) {
+    return null;
+  }
+
+  const voters = new Set(state.votes[launch.id] ?? []);
+  const wasVoted = voters.has(request.viewerId);
+  if (wasVoted) {
+    voters.delete(request.viewerId);
+    launch.voteCount = Math.max(0, launch.voteCount - 1);
+  } else {
+    voters.add(request.viewerId);
+    launch.voteCount += 1;
+  }
+  state.votes[launch.id] = [...voters];
+  writeStore(state);
+
+  return {
+    launchId: launch.id,
+    voteCount: launch.voteCount,
+    isVotedByViewer: !wasVoted
   };
 }
 
@@ -76,7 +123,7 @@ export function createRegisteredStoreKickService(baseService: KickService): Kick
         return await baseService.getProductDetail(slug, viewerId);
       } catch (error) {
         if ((error as { code?: string })?.code === "NOT_FOUND") {
-          const registered = findRegisteredDetail(slug);
+          const registered = findRegisteredDetail(slug, viewerId);
           if (registered) {
             return registered;
           }
@@ -87,9 +134,39 @@ export function createRegisteredStoreKickService(baseService: KickService): Kick
     async registerProduct(input) {
       return registerProduct(input);
     },
+    async toggleVote(request) {
+      try {
+        return await baseService.toggleVote(request);
+      } catch (error) {
+        if ((error as { code?: string })?.code === "NOT_FOUND") {
+          const vote = toggleRegisteredVote(request);
+          if (vote) {
+            return vote;
+          }
+        }
+        throw error;
+      }
+    },
     async resetToSeed() {
       clearRegisteredStore();
       return baseService.resetToSeed();
     }
   };
+}
+
+function normalizeVotes(value: unknown): Record<string, string[]> {
+  if (!isRecord(value)) {
+    return {};
+  }
+  return Object.fromEntries(
+    Object.entries(value).flatMap(([launchId, viewerIds]) =>
+      Array.isArray(viewerIds)
+        ? [[launchId, viewerIds.filter((viewerId): viewerId is string => typeof viewerId === "string")]]
+        : []
+    )
+  );
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
